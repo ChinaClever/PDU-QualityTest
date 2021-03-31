@@ -19,7 +19,7 @@ struct sDataUnit
     ushort value[PACK_ARRAY_SIZE]; // 值
     ushort min[PACK_ARRAY_SIZE]; // 最小值
     ushort max[PACK_ARRAY_SIZE]; // 最大值
-    uchar alarm[PACK_ARRAY_SIZE]; // 报警值 0表示未报警  1表示已报警 2表示已纪录
+    uchar alarm[PACK_ARRAY_SIZE]; // 报警值 0表示未报警  1表示已报警 2表示已记录
     uchar status[PACK_ARRAY_SIZE];
 };
 
