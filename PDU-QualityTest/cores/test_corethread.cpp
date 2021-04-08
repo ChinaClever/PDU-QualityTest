@@ -112,7 +112,6 @@ void Test_CoreThread::workDown()
     mLogs->updatePro(tr("自动检查已启动"));
     if(mItem->enSn)mSn->snEnter();
     ret = startProcess();
-
     if(ret) {
         QTimer::singleShot(50,this,SLOT(manualSlot()));
         while(mPro->step < Test_Manual)  msleep(100);
