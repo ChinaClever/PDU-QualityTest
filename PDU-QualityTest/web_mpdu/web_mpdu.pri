@@ -12,7 +12,7 @@ SOURCES +=
 FORMS +=
 
 DISTFILES += \
-    $$PWD/main.pyw \
+    $$PWD/pyweb_quality_mpdu.pyw \
     $$PWD/mpdu.py \
     $$PWD/mpdu2.py \
     $$PWD/mpdu_huawei.py \

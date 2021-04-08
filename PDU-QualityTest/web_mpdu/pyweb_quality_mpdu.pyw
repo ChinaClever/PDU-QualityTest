@@ -1,5 +1,6 @@
-from ctrlset_mpdu.mpdu2 import  *
-from ctrlset_mpdu.mpdu import  *
+from quality_mpdu.mpdu2 import  *
+from quality_mpdu.mpdu import  *
+from quality_mpdu.mpdu_huawei import  *
 import os
 import socket
 import datetime
@@ -15,17 +16,16 @@ if __name__ == '__main__':
     
     ver = MpduWeb.getCfg().get("mCfg", "mpdu_ver")
    
-    #if( len(ver) == 0):
-    #    message = '填入版本不能为空;0'
-    #    sock.sendto(message.encode('utf-8-sig') , (dest_ip , dest_port))
-    #    sys.exit(0)
-    #if( 'P' in ver and 'C' in ver ):
-    if( int(ver) == 1):
+    if( int(ver) == 2):
         app2 = Mpdu2()
         app2.start_fun(sock , dest_ip , dest_port)
         app2.close()
-    else:
+    elif(int(ver) == 1):
         app1 = Mpdu()
         app1.start_fun(sock , dest_ip , dest_port)
         app1.close()
+    else:
+        app3 = MpduHuawei()
+        app3.start_fun(sock , dest_ip , dest_port)
+        app3.close()
 

@@ -1,4 +1,4 @@
-from ctrlset_mpdu.mpdu_web import  *
+from quality_mpdu.mpdu_web import  *
 import datetime
 
 class Mpdu(MpduWeb):
@@ -23,19 +23,22 @@ class Mpdu(MpduWeb):
         
         self.changetocorrect()
         #self.setCorrect2()
-        self.setCorrect1()
-        time.sleep(5)
-        self.login()
-        self.changetocorrect()
+        
+        #time.sleep(5)
+        #self.login()
+        #self.changetocorrect()
         self.checkCorrectHtml()
         
         
         #self.checkTitleBar2()
         #if( int(cfg['series']) != 1 ):
         #    self.checkTitleBar3(opLists)
-        #self.clearEnergy()
+        if( int(cfg['series']) == 3 or int(cfg['series']) == 4 ):
+            self.checkTitleBar5()
+        self.clearEnergy()
         #self.setTime()
-        #self.clearLogs()
+        self.checkTime()
+        self.clearLogs()
     
 
     def clearLogs(self):
@@ -75,33 +78,15 @@ class Mpdu(MpduWeb):
         except:
             self.sendtoMainapp('账号密码错误;0')
             time.sleep(0.35)
-            self.sendtoMainapp('MAC-1')
+            #self.sendtoMainapp('MAC-1')
             return
         else:
             time.sleep(1)
             self.driver.switch_to.default_content()
-    
-    def setCorrect1(self):
-        cfg = self.cfgs
-        if (len(cfg['mac']) > 5  ):#NoSuchElementException
-            strMac =  cfg['mac']
-        try:
-            self.driver.find_element_by_id('mac1')
-        except NoSuchElementException:
-            return
-        v = self.driver.find_element_by_id('mac1').get_attribute('value')
-        if( '2C:26:5F:' not in v):
-            v = strMac
-            jsSheet1 = 'var type = document.getElementById(\"type\").value;var language = document.getElementById(\"language").value;var breaker = document.getElementById(\"breaker\").value;var serial = document.getElementById(\"serial\").value;var neutral = document.getElementById(\"neutral\").value;var LineN = document.getElementById(\"LineN\").value;var CircuitN = document.getElementById(\"CircuitN\").value;var OutputN = document.getElementById(\"OutputN\").value;var level = document.getElementById("level").value;var claerset = createXmlRequest();claerset.onreadystatechange = setmac;ajaxget(claerset, \"/correct?a=\" +1 +\"&b=\"+type +\"&c=\"+language + \"&d=\"+\"{mac1}\" + \"&e=\"+breaker + \"&f=\"+ serial + \"&g=\"+ neutral+\"&h=\"+LineN+\"&i=\"+CircuitN + \"&j=\"+OutputN + \"&k=\"+level +\"&\");'.format(mac1 = v)
-            self.execJs(jsSheet1)
-            time.sleep(0.35)
-        else:
-            self.sendtoMainapp('MAC-1')
         
 
     def setCorrect2(self):
         cfg = self.cfgs
-        
         
         jsSheet = 'var claerlimit = createXmlRequest();claerlimit.onreadystatechange = setdatlimit;ajaxget(claerlimit, \"/alllimit?a=\" +{limit1}+\"&b=\"+{limit2} +\"&c=\"+{limit3} + \"&d=\"+{limit4}+\"&e=\"+{limit5} +\"&f=\"+{limit6} + \"&g=\"+{limit7}+\"&h=\"+{limit8} +\"&i=\"+{limit9} + \"&j=\"+{limit10}+\"&k=\"+{limit11} + \"&l=\"+{limit12} +\"&m=\"+{limit13} + \"&n=\"+{limit14} +\"&\");'.format( limit1 = cfg['vol_min'] , limit2 = cfg['vol_max'] , limit3 = int(cfg['cur_min'])*10 , limit4 = int(cfg['cur_max'])*10 ,limit5 = cfg['tem_min'] , limit6 = cfg['tem_max'],limit7 = cfg['hum_min'] , limit8 = cfg['hum_max'] ,limit9 = int(cfg['output_min'])*10 , limit10 = int(cfg['output_crmin'])*10 , limit11 = int(cfg['output_crmax'])*10 , limit12 = int(cfg['output_max'])*10 , limit13 = int(cfg['cur_crmin'])*10 , limit14 = int(cfg['cur_crmax'])*10)
         self.execJs(jsSheet)
@@ -109,9 +94,9 @@ class Mpdu(MpduWeb):
         
     def checkCorrectHtml(self):
         cfg = self.cfgs
-        if (len(cfg['mac']) > 5  ):
-            status , message = self.macAddrCheck( 'mac1' , cfg['mac'] , 'mac地址')
-            self.sendtoMainapp(message)
+        
+        status , message = self.macAddrCheck( 'mac1'  , 'mac地址')
+        self.sendtoMainapp(message)
         
         self.driver.back()
         
@@ -316,7 +301,11 @@ class Mpdu(MpduWeb):
         messageList = []
         for i in range(1 , int(op)+1):
             ms = 'ms{0}'.format(i)
-            status , message = self.checkStr( ms , '1' , '上下电延时')
+            status , message = '' ,''
+            if( int(self.cfgs['series']) == 3 or int(self.cfgs['series']) == 4):
+                status , message = self.checkStr( ms , '1' , '上下电延时')
+            else:
+                status , message = self.checkStr( ms , '0' , '上下电延时')
             statusList.append(status)
             messageList.append(message)
             
@@ -419,4 +408,49 @@ class Mpdu(MpduWeb):
                 lists[index].append(int(cfg[max]))
                 index += 1
         return lists
+        
+    def checkTitleBar5(self):
+        cfg = self.cfgs
+        self.divClick(2)
+        
+        time.sleep(0.35)
+        self.driver.find_element_by_id("titlebar5").click()
+        time.sleep(0.35)
+        
+        op = cfg['outputs']
+        statusList = []
+        messageList = []
+        for i in range(1 , int(op)+1):
+            sw = 'Csw{0}'.format(i)
+            status , message = '' ,''
+            if( int(cfg['language']) == 1 ):
+                status , message = self.checkSWStr( sw , '开' , '开关{0}'.format(i))
+            else:
+                status , message = self.checkSWStr( sw , 'ON' , '开关{0}'.format(i))
+            statusList.append(status)
+            messageList.append(message)
             
+        msStr = zip(statusList , messageList)
+        flag = False
+        for x,y in msStr:
+            if( x==0 or x==2):
+                self.sendtoMainapp(y)
+                flag = True
+        if( flag == False):
+            self.sendtoMainapp("设置开关成功;1" )
+    
+    def checkTime(self):
+        self.divClick(4)
+        #if( int(self.cfgs['security']) == 1 ):
+        #    time.sleep(1)
+        time.sleep(0.5)
+        self.driver.find_element_by_id("biao6").click()
+        time.sleep(0.5)
+        
+        #print( self.driver.find_element_by_id('loctime').text)
+        strlen = len(self.driver.find_element_by_id('loctime').text)
+        
+        if( self.driver.find_element_by_id('loctime').text[0:strlen-4]==self.driver.find_element_by_id('devtime1').text[0:strlen-4]):
+            self.sendtoMainapp("设置时间成功;1" )
+        else:
+            self.sendtoMainapp("设置时间失败;0" )
