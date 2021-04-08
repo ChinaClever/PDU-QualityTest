@@ -73,14 +73,15 @@ void Test_CoreThread::workResult(bool res)
 bool Test_CoreThread::confirmBox(QString &str)
 {
      bool ret = MsgBox::question(nullptr, str);
-     if(ret) str += tr("通过"); else {str += tr("异常"); mPro->step = Test_Manual;}
+     if(ret) str += tr("通过"); else {str += tr("异常"); mPro->step = Test_Over;}
      return mLogs->updatePro(str, ret);
 }
 
 
 bool Test_CoreThread::manualSlot()
 {
-    QString str = tr("logo检查");
+     mPro->step = Test_Manual;
+    QString str = tr("请确认各接口接线");
     bool ret = confirmBox(str); if(!ret) return false;
 
     str = tr("PDU外观检查\n");
@@ -98,7 +99,6 @@ bool Test_CoreThread::manualSlot()
     str = tr("蜂鸣器、Alarm检查\n");
     str += tr("请注意检查蜂鸣器是否蜂鸣、声光告警器是否亮起");
     ret = confirmBox(str); if(!ret) return false;
-    mPro->step = Test_Manual;
 
     return ret;
 }
@@ -109,13 +109,13 @@ void Test_CoreThread::workDown()
 {
     bool ret = true;
     mItem->sn.clear();
-    mLogs->updatePro(tr("自动检查已启动"));
-    if(mItem->enSn)mSn->snEnter();
-    ret = startProcess();
+    mLogs->updatePro(tr("网页检查已启动"));
+    if(mItem->enSn) ret = mSn->snEnter();
     if(ret) {
         QTimer::singleShot(50,this,SLOT(manualSlot()));
-        while(mPro->step < Test_Manual)  msleep(100);
+        while(mPro->step < Test_Over) msleep(100);
     }
+    if(ret) ret = startProcess();
 
     workResult(ret);
 }

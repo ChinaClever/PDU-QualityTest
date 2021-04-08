@@ -123,8 +123,8 @@ struct sDevData
 enum {
     Test_Fun, // 功能
     Test_Start, // 开始
-    Test_vert, // 验证
     Test_Manual,
+    Test_vert, // 验证    
     Test_Over, // 终止
     Test_End, // 完成
 

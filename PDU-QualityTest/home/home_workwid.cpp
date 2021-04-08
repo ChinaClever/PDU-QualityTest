@@ -193,9 +193,6 @@ bool Home_WorkWid::initWid()
             MsgBox::critical(this, tr("请先填写订单剩余数量！")); return false;
         }
 
-        QString str = tr("请确认各接口接线");
-        ret = MsgBox::question(this, str); if(!ret) return false;
-
         mPacket->init();
         emit startSig();
         ui->textEdit->clear();
@@ -208,10 +205,11 @@ bool Home_WorkWid::initWid()
 
 void Home_WorkWid::on_startBtn_clicked()
 {
+    bool ret = true;
     if(mPro->step == Test_End) {
-        if(initWid()) mCoreThread->start();
+        if(initWid())mCoreThread->start();
     } else {
-        bool ret = MsgBox::question(this, tr("确定需要提前结束？"));
+        ret = MsgBox::question(this, tr("确定需要提前结束？"));
         if(ret) {
             mPro->result = Test_Fail;
             updateResult();
