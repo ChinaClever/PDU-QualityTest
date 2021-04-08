@@ -109,7 +109,7 @@ void Test_CoreThread::workDown()
 {
     bool ret = true;
     mItem->sn.clear();
-    mLogs->updatePro(tr("网页检查已启动"));
+    mLogs->updatePro(tr("质检已启动"));
     if(mItem->enSn) ret = mSn->snEnter();
     if(ret) {
         QTimer::singleShot(50,this,SLOT(manualSlot()));
