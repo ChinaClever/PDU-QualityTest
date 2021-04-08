@@ -15,9 +15,12 @@ protected:
     bool checkNet();
     bool startProcess();
     void workResult(bool res);
+    void openAllSwitch();
+    bool manualConfirmBox(QString &str);
 
 protected slots:
     void initFunSlot();
+    bool manualConfirmSlot();
 
 private:
     Test_Logs *mLogs;
