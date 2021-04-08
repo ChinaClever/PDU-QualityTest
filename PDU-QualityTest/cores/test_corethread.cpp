@@ -92,6 +92,10 @@ bool Test_CoreThread::manualSlot()
     str += tr("请检查显示器、指示灯、按键是否正常");
     ret = confirmBox(str); if(!ret) return false;
 
+    str = tr("IN/out口检查\n");
+    str += tr("请检查级联口通讯是否正常");
+    ret = confirmBox(str); if(!ret) return false;
+
     str = tr("断路器检查\n");
     str += tr("请手动断开断路器，检查对应的输出位指示灯是否为灭，之后闭合断路器，指示灯为亮");
     ret = confirmBox(str); if(!ret) return false;
