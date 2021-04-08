@@ -70,7 +70,7 @@ void Test_CoreThread::workResult(bool res)
     mPro->step = Test_Over;
 }
 
-bool Test_CoreThread::manualConfirmBox(QString &str)
+bool Test_CoreThread::confirmBox(QString &str)
 {
      bool ret = MsgBox::question(nullptr, str);
      if(ret) str += tr("通过"); else {str += tr("异常"); mPro->step = Test_Manual;}
@@ -78,26 +78,26 @@ bool Test_CoreThread::manualConfirmBox(QString &str)
 }
 
 
-bool Test_CoreThread::manualConfirmSlot()
+bool Test_CoreThread::manualSlot()
 {
     QString str = tr("logo检查");
-    bool ret = manualConfirmBox(str); if(!ret) return false;
+    bool ret = confirmBox(str); if(!ret) return false;
 
     str = tr("PDU外观检查\n");
     str += tr("请检查PDU颜色、丝印、接线等是否符合要求");
-    ret = manualConfirmBox(str); if(!ret) return false;
+    ret = confirmBox(str); if(!ret) return false;
 
     str = tr("显示屏、指示灯、按键\n");
     str += tr("请检查显示器、指示灯、按键是否正常");
-    ret = manualConfirmBox(str); if(!ret) return false;
+    ret = confirmBox(str); if(!ret) return false;
 
     str = tr("断路器检查\n");
     str += tr("请手动断开断路器，检查对应的输出位指示灯是否为灭，之后闭合断路器，指示灯为亮");
-    ret = manualConfirmBox(str); if(!ret) return false;
+    ret = confirmBox(str); if(!ret) return false;
 
     str = tr("蜂鸣器、Alarm检查\n");
     str += tr("请注意检查蜂鸣器是否蜂鸣、声光告警器是否亮起");
-    ret = manualConfirmBox(str); if(!ret) return false;
+    ret = confirmBox(str); if(!ret) return false;
     mPro->step = Test_Manual;
 
     return ret;
@@ -114,7 +114,7 @@ void Test_CoreThread::workDown()
     ret = startProcess();
 
     if(ret) {
-        QTimer::singleShot(50,this,SLOT(initFunSlot()));
+        QTimer::singleShot(50,this,SLOT(manualSlot()));
         while(mPro->step < Test_Manual)  msleep(100);
     }
 
