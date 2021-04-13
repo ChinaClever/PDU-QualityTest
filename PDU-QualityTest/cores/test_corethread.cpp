@@ -80,7 +80,7 @@ bool Test_CoreThread::confirmBox(QString &str)
 
 bool Test_CoreThread::manualSlot()
 {
-     mPro->step = Test_Manual;
+    mPro->step = Test_Manual;
     QString str = tr("请确认各接口接线");
     bool ret = confirmBox(str); if(!ret) return false;
 
@@ -92,7 +92,7 @@ bool Test_CoreThread::manualSlot()
     str += tr("请检查显示器、指示灯、按键是否正常");
     ret = confirmBox(str); if(!ret) return false;
 
-    str = tr("IN/out口检查\n");
+    str = tr("IN/OUT 口检查\n");
     str += tr("请检查级联口通讯是否正常");
     ret = confirmBox(str); if(!ret) return false;
 
