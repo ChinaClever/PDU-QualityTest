@@ -206,7 +206,7 @@ bool Home_WorkWid::manualConfirm()
     str += tr("请检查显示器、指示灯、按键是否正常");
     ret = confirmBox(str); if(!ret) return false;
 
-    str = tr("IN/out口检查\n");
+    str = tr("IN/OUT口检查\n");
     str += tr("请检查级联口通讯是否正常");
     ret = confirmBox(str); if(!ret) return false;
 
