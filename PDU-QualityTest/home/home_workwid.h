@@ -36,6 +36,8 @@ protected:
 
     bool initSerial();
     bool initWid();
+    bool confirmBox(QString &str);
+    bool manualConfirm();
 
 private slots:
     void timeoutDone();
