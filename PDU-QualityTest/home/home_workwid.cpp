@@ -237,10 +237,12 @@ bool Home_WorkWid::initWid()
         mPacket->init();
         ret = manualConfirm();
         if(ret) {
-
             emit startSig();
             mPro->step = Test_Start;
             ui->groupBox_4->setEnabled(false);
+        } else {
+            mPro->step = Test_Over;
+            mPro->result = Test_Fail;
         }
     }
 
