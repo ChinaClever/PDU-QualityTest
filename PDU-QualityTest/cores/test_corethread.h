@@ -16,11 +16,9 @@ protected:
     bool startProcess();
     void workResult(bool res);
     void openAllSwitch();
-    bool confirmBox(QString &str);
 
 protected slots:
     void initFunSlot();
-    bool manualSlot();
 
 private:
     Test_Logs *mLogs;

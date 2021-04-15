@@ -182,6 +182,46 @@ bool Home_WorkWid::initSerial()
     return ret;
 }
 
+
+bool Home_WorkWid::confirmBox(QString &str)
+{
+    Test_Logs *log = Test_Logs::bulid(this);
+    bool ret = MsgBox::question(nullptr, str);
+    if(ret) str += tr("通过"); else {str += tr("异常"); mPro->step = Test_Over;}
+    return log->updatePro(str, ret);
+}
+
+
+bool Home_WorkWid::manualConfirm()
+{
+    mPro->step = Test_Manual;
+    QString str = tr("请确认各接口接线");
+    bool ret = confirmBox(str); if(!ret) return false;
+
+    str = tr("PDU外观检查\n");
+    str += tr("请检查PDU颜色、丝印、接线等是否符合要求");
+    ret = confirmBox(str); if(!ret) return false;
+
+    str = tr("显示屏、指示灯、按键\n");
+    str += tr("请检查显示器、指示灯、按键是否正常");
+    ret = confirmBox(str); if(!ret) return false;
+
+    str = tr("IN/out口检查\n");
+    str += tr("请检查级联口通讯是否正常");
+    ret = confirmBox(str); if(!ret) return false;
+
+    str = tr("断路器检查\n");
+    str += tr("请手动断开断路器，检查对应的输出位指示灯是否为灭，之后闭合断路器，指示灯为亮");
+    ret = confirmBox(str); if(!ret) return false;
+
+    str = tr("蜂鸣器、Alarm检查\n");
+    str += tr("请注意检查蜂鸣器是否蜂鸣、声光告警器是否亮起");
+    ret = confirmBox(str); if(!ret) return false;
+
+    return ret;
+}
+
+
 bool Home_WorkWid::initWid()
 {
     bool ret = initSerial();
@@ -193,11 +233,14 @@ bool Home_WorkWid::initWid()
             MsgBox::critical(this, tr("请先填写订单剩余数量！")); return false;
         }
 
-        mPacket->init();
-        emit startSig();
-        ui->textEdit->clear();
-        mPro->step = Test_Start;
-        ui->groupBox_4->setEnabled(false);
+        ret = manualConfirm();
+        if(ret) {
+            mPacket->init();
+            emit startSig();
+            ui->textEdit->clear();
+            mPro->step = Test_Start;
+            ui->groupBox_4->setEnabled(false);
+        }
     }
 
     return ret;
