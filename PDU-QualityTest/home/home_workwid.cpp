@@ -224,6 +224,7 @@ bool Home_WorkWid::manualConfirm()
 
 bool Home_WorkWid::initWid()
 {
+    ui->textEdit->clear();
     bool ret = initSerial();
     if(ret) {
         if(mItem->user.isEmpty()) {
@@ -233,11 +234,11 @@ bool Home_WorkWid::initWid()
             MsgBox::critical(this, tr("请先填写订单剩余数量！")); return false;
         }
 
+        mPacket->init();
         ret = manualConfirm();
         if(ret) {
-            mPacket->init();
+
             emit startSig();
-            ui->textEdit->clear();
             mPro->step = Test_Start;
             ui->groupBox_4->setEnabled(false);
         }
