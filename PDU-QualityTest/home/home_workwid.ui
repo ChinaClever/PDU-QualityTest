@@ -592,7 +592,7 @@
          </font>
         </property>
         <property name="text">
-         <string>开始设置</string>
+         <string>开始质检</string>
         </property>
        </widget>
       </item>

@@ -195,7 +195,8 @@ bool Home_WorkWid::confirmBox(QString &str)
 bool Home_WorkWid::manualConfirm()
 {
     mPro->step = Test_Manual;
-    QString str = tr("请确认各接口接线");
+    QString str = tr("请确认各接口接线\n");
+    str += tr("请检查网线是否接入NET口，串口线是否接入SER口");
     bool ret = confirmBox(str); if(!ret) return false;
 
     str = tr("PDU外观检查\n");
@@ -214,9 +215,9 @@ bool Home_WorkWid::manualConfirm()
     str += tr("请手动断开断路器，检查对应的输出位指示灯是否为灭，之后闭合断路器，指示灯为亮");
     ret = confirmBox(str); if(!ret) return false;
 
-    str = tr("蜂鸣器、Alarm检查\n");
-    str += tr("请注意检查蜂鸣器是否蜂鸣、声光告警器是否亮起");
-    ret = confirmBox(str); if(!ret) return false;
+//    str = tr("蜂鸣器、Alarm检查\n");
+//    str += tr("请注意检查蜂鸣器是否蜂鸣、声光告警器是否亮起");
+//    ret = confirmBox(str); if(!ret) return false;
 
     return ret;
 }
