@@ -108,7 +108,7 @@ void Home_WorkWid::updateTime()
 
     ui->timeLab->setText(str);
     ui->timeLab->setStyleSheet(style);
-    ui->startBtn->setText(tr("终止设置"));
+    ui->startBtn->setText(tr("终止质检"));
 }
 
 void Home_WorkWid::updateResult()
@@ -128,7 +128,7 @@ void Home_WorkWid::updateResult()
     ui->timeLab->setText(str);
     ui->timeLab->setStyleSheet(style);
     ui->groupBox_4->setEnabled(true);
-    ui->startBtn->setText(tr("开始设置"));
+    ui->startBtn->setText(tr("开始质检"));
     ui->cntSpin->setValue(mItem->cnt.cnt);
     if(mItem->cnt.cnt < 1) {
         mItem->user.clear();
@@ -211,9 +211,12 @@ bool Home_WorkWid::manualConfirm()
     str += tr("请检查级联口通讯是否正常");
     ret = confirmBox(str); if(!ret) return false;
 
-    str = tr("断路器检查\n");
-    str += tr("请手动断开断路器，检查对应的输出位指示灯是否为灭，之后闭合断路器，指示灯为亮");
-    ret = confirmBox(str); if(!ret) return false;
+    if( mPacket && mPacket->getMpdu() && mPacket->getMpdu()->dt.breaker)
+    {
+        str = tr("断路器检查\n");
+        str += tr("请手动断开断路器，检查对应的输出位指示灯是否为灭，之后闭合断路器，指示灯为亮");
+        ret = confirmBox(str); if(!ret) return false;
+    }
 
 //    str = tr("蜂鸣器、Alarm检查\n");
 //    str += tr("请注意检查蜂鸣器是否蜂鸣、声光告警器是否亮起");
