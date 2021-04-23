@@ -38,6 +38,7 @@ protected:
     bool initWid();
     bool confirmBox(QString &str);
     bool manualConfirm();
+    bool checkRtu(QString &str);
 
 private slots:
     void timeoutDone();

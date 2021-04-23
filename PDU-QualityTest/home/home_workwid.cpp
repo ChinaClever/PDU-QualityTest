@@ -182,12 +182,30 @@ bool Home_WorkWid::initSerial()
     return ret;
 }
 
-
 bool Home_WorkWid::confirmBox(QString &str)
 {
     Test_Logs *log = Test_Logs::bulid(this);
-    bool ret = MsgBox::question(nullptr, str);
-    if(ret) str += tr("通过"); else {str += tr("异常"); mPro->step = Test_Over;}
+    bool ret = MsgBox::question(this, str);
+    if(ret) str += tr(" 通过"); else {str += tr(" 异常"); mPro->step = Test_Over;}
+    str = str.remove('\n');
+    return log->updatePro(str, ret);
+}
+
+bool Home_WorkWid::checkRtu(QString &str)
+{
+    int ret = 0; SerialPort *com = mItem->com;
+    Test_Logs *log = Test_Logs::bulid(this);
+
+    MsgBox::information(this, str);
+    uchar cmd[8] = {0x01,0x03,0x00,0x00,0x00,0x02,0xC4,0x0B};
+    com->reflush(); com->write(cmd, 8);
+    QTime dieTime = QTime::currentTime().addSecs(1);
+    while(QTime::currentTime() < dieTime){
+        QCoreApplication::processEvents(QEventLoop::AllEvents,100);
+        ret = com->reflush(); if(ret) break;
+    }
+    if(ret) str += tr(" 通过"); else {str += tr(" 异常"); mPro->step = Test_Over;}
+    str = str.remove('\n');
     return log->updatePro(str, ret);
 }
 
@@ -195,27 +213,36 @@ bool Home_WorkWid::confirmBox(QString &str)
 bool Home_WorkWid::manualConfirm()
 {
     mPro->step = Test_Manual;
-    QString str = tr("请确认各接口接线\n");
+    QString str = tr("请确认各接口接线：\n");
     str += tr("请检查网线是否接入NET口，串口线是否接入SER口");
     bool ret = confirmBox(str); if(!ret) return false;
 
-    str = tr("PDU外观检查\n");
+    str = tr("PDU外观检查：\n");
     str += tr("请检查PDU颜色、丝印、接线等是否符合要求");
     ret = confirmBox(str); if(!ret) return false;
 
-    str = tr("显示屏、指示灯、按键\n");
+    str = tr("显示屏、指示灯、按键：\n");
     str += tr("请检查显示器、指示灯、按键是否正常");
     ret = confirmBox(str); if(!ret) return false;
-
-    str = tr("IN/OUT口检查\n");
-    str += tr("请检查级联口通讯是否正常");
-    ret = confirmBox(str); if(!ret) return false;
-
-    if( mPacket && mPacket->getMpdu() && mPacket->getMpdu()->dt.breaker)
-    {
-        str = tr("断路器检查\n");
+    if(mPacket->getMpdu()->dt.breaker) {
+        str = tr("断路器检查：\n");
         str += tr("请手动断开断路器，检查对应的输出位指示灯是否为灭，之后闭合断路器，指示灯为亮");
         ret = confirmBox(str); if(!ret) return false;
+    }
+
+    str = tr("IN口检查\n");
+    str += tr("请向IN口接入通讯线，通讯是否正常");
+    ret = checkRtu(str); if(!ret) return false;
+
+    str = tr("OUT口检查\n");
+    str += tr("请向OUT口接入通讯线，通讯是否正常");
+    ret = checkRtu(str); if(!ret) return false;
+    if(mPacket->getMpdu()->dt.envbox) {
+        MsgBox::information(this, tr("请接入传感器盒子"));
+    } else {
+        str = tr("SER口检查\n");
+        str += tr("请向SER口接入通讯线，通讯是否正常");
+        ret = checkRtu(str); if(!ret) return false;
     }
 
 //    str = tr("蜂鸣器、Alarm检查\n");

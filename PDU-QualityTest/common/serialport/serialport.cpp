@@ -117,10 +117,10 @@ bool SerialPort::isContains(const QString &name)
 
 void SerialPort::timeoutDone()
 {
-    if(mCount++ % 10) {
-        recvSlot();
-    } else {
+    if(mWriteArrays.size()) {
         writeSlot();
+    } else {
+        recvSlot();
     }
 }
 
@@ -170,14 +170,12 @@ int SerialPort::write(uchar *sent, int len)
 
 void SerialPort::writeSlot()
 {
-    if(mWriteArrays.size()) {
-        int ret = send(mWriteArrays.first());
-        if(ret > 0) {
-            mWriteArrays.removeFirst();
-            mSerialData.clear();
-        } else {
-            mWriteArrays.clear();
-        }
+    int ret = send(mWriteArrays.first());
+    if(ret > 0) {
+        mWriteArrays.removeFirst();
+        mSerialData.clear();
+    } else {
+        mWriteArrays.clear();
     }
 }
 
@@ -199,7 +197,7 @@ void SerialPort::recvSlot()
 
         // 过滤单片机开机发出0xff无效数据
         if(dataTemp.size() == 1)  {
-           if(dataTemp.at(0) == (char)0xFF) dataTemp.clear();
+            if(dataTemp.at(0) == (char)0xFF) dataTemp.clear();
         }
 
         mSerialData += dataTemp;
@@ -242,10 +240,12 @@ int SerialPort::read(uchar *recvstr, int secs)
     return ret;
 }
 
-void SerialPort::reflush()
+int SerialPort::reflush()
 {
+    int ret = mSerialData.size();
     QWriteLocker locker(&mRwLock);
     mSerialData.clear();
+    return ret;
 }
 
 /**
