@@ -93,6 +93,11 @@ void Home_MpduParamWid::updateType()
 
     for(int i=0; i<6; ++i) dt->loop[i] = mLoops[i]->value();
     for(int i=0; i<3; ++i) dt->board[i] = mBoards[i]->value();
+
+    if( dt->mpdu_ver == 2 && !dt->versions.contains(".") )
+        emit sendVerSig(dt->versions.toInt());
+    else
+        emit sendVerSig(30);
 }
 
 void Home_MpduParamWid::setItHidden(bool hidden)

@@ -17,6 +17,7 @@ public:
 
 signals:
     void errSig();
+    void sendMpduVerSig(int);
 
 protected:
     void initWid();

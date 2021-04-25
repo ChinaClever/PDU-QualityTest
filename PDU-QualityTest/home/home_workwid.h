@@ -50,6 +50,7 @@ private slots:
     void on_outputBtn_clicked();
     void on_typeComboBox_currentIndexChanged(int index);
     void on_snCheckBox_clicked(bool checked);
+    void recvVerSlot(int ver);
 
 public slots:
     void errSlot() {QTimer::singleShot(5,this,SLOT(saveErrSlot()));}

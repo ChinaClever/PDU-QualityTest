@@ -891,7 +891,7 @@
         <item>
          <widget class="QComboBox" name="envBox">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="minimumSize">
            <size>

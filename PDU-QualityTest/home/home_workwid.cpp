@@ -196,7 +196,8 @@ bool Home_WorkWid::checkRtu(QString &str)
     int ret = 0; SerialPort *com = mItem->com;
     Test_Logs *log = Test_Logs::bulid(this);
 
-    MsgBox::information(this, str);
+    if( str != tr("IN口检查"))
+        MsgBox::information(this, str);
     uchar cmd[8] = {0x01,0x03,0x00,0x00,0x00,0x02,0xC4,0x0B};
     com->reflush(); com->write(cmd, 8);
     QTime dieTime = QTime::currentTime().addSecs(1);
@@ -214,11 +215,11 @@ bool Home_WorkWid::manualConfirm()
 {
     mPro->step = Test_Manual;
     QString str = tr("请确认各接口接线：\n");
-    str += tr("请检查网线是否接入NET口，串口线是否接入SER口");
+    str += tr("请确认网线是否接入NET口、串口线是否接入IN口，温湿度传感器接在T/H口，声光告警器接在Alarm口");
     bool ret = confirmBox(str); if(!ret) return false;
 
     str = tr("PDU外观检查：\n");
-    str += tr("请检查PDU颜色、丝印、接线等是否符合要求");
+    str += tr("请检查PDU颜色、丝印、插座、电缆线等是否符合要求");
     ret = confirmBox(str); if(!ret) return false;
 
     str = tr("显示屏、指示灯、按键：\n");
@@ -230,24 +231,19 @@ bool Home_WorkWid::manualConfirm()
         ret = confirmBox(str); if(!ret) return false;
     }
 
-    str = tr("IN口检查\n");
-    str += tr("请向IN口接入通讯线，通讯是否正常");
+    str = tr("IN口检查");
     ret = checkRtu(str); if(!ret) return false;
 
     str = tr("OUT口检查\n");
-    str += tr("请向OUT口接入通讯线，通讯是否正常");
+    str += tr("请将接入IN口的串口线换到OUT口");
     ret = checkRtu(str); if(!ret) return false;
     if(mPacket->getMpdu()->dt.envbox) {
         MsgBox::information(this, tr("请接入传感器盒子"));
     } else {
         str = tr("SER口检查\n");
-        str += tr("请向SER口接入通讯线，通讯是否正常");
+        str += tr("请将接入OUT口的串口线换到SER口");
         ret = checkRtu(str); if(!ret) return false;
     }
-
-//    str = tr("蜂鸣器、Alarm检查\n");
-//    str += tr("请注意检查蜂鸣器是否蜂鸣、声光告警器是否亮起");
-//    ret = confirmBox(str); if(!ret) return false;
 
     return ret;
 }
@@ -291,6 +287,19 @@ void Home_WorkWid::on_startBtn_clicked()
             mPro->result = Test_Fail;
             updateResult();
         }
+    }
+}
+
+void Home_WorkWid::recvVerSlot(int ver)
+{
+    if( ver <= 32 )
+        ui->snCheckBox->setChecked(false);
+    else
+    {
+        ui->snCheckBox->setChecked(true);
+        if( ver >= 300 && ver <= 320)
+            ui->snCheckBox->setChecked(false);
+
     }
 }
 
