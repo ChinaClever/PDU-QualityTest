@@ -262,7 +262,8 @@ bool Home_WorkWid::initWid()
         }
 
         mPacket->init();
-        ret = manualConfirm();
+        ret = ui->guideCheck->isChecked();
+        if(ret)ret = manualConfirm();
         if(ret) {
             emit startSig();
             mPro->step = Test_Start;
