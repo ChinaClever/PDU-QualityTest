@@ -639,7 +639,7 @@
          </font>
         </property>
         <property name="text">
-         <string>软件引导</string>
+         <string>人工引导流程</string>
         </property>
        </widget>
       </item>
