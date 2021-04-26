@@ -18,27 +18,24 @@ class Mpdu(MpduWeb):
         if(intRet == 0):
             return
         
-        #opLists = self.opThreshold()
-        #opLists.sort()
-        
         self.changetocorrect()
-        #self.setCorrect2()
         
-        #time.sleep(5)
-        #self.login()
-        #self.changetocorrect()
         self.checkCorrectHtml()
         
-        
-        #self.checkTitleBar2()
-        #if( int(cfg['series']) != 1 ):
-        #    self.checkTitleBar3(opLists)
+        self.checkTitleBar2()
+        if( int(cfg['series']) != 1 and int(cfg['series']) != 5 ):
+            self.checkTitleBar3()
         if( int(cfg['series']) == 3 or int(cfg['series']) == 4 ):
-            self.checkTitleBar5()
+            self.openOrOffTitleBar5( False )
+            self.confirmTips( False )
+            self.checkTitleBar5( False )
+            self.openOrOffTitleBar5( True )
+            self.confirmTips( True )
+            self.checkTitleBar5( True )
         self.clearEnergy()
-        #self.setTime()
         self.checkTime()
         self.clearLogs()
+        self.resetFactory()
     
 
     def clearLogs(self):
@@ -78,7 +75,6 @@ class Mpdu(MpduWeb):
         except:
             self.sendtoMainapp('账号密码错误;0')
             time.sleep(0.35)
-            #self.sendtoMainapp('MAC-1')
             return
         else:
             time.sleep(1)
@@ -108,58 +104,30 @@ class Mpdu(MpduWeb):
         time.sleep(0.35)
         self.driver.find_element_by_id("titlebar2").click()
         time.sleep(0.35)
+        self.setAlarmTcur()
+        self.setNormalTcur()
+        self.checkTem()
+        self.checkCurTem()
+      
+        self.checkHum()
+        self.checkCurHum()
         
-        line , loop = 1 , int(cfg['loops'])
+    def checkCurTem(self):
         list=[]
         cfgStr = []
         outputStr = []
-        if( int(cfg['lines']) == 1 and int(cfg['loops']) == 1 ):
-            line = 1
-        else:
-            line = 3
-        for i in range(1 , line+1):
-            list.append('Tcmin{0}'.format(i))
-            list.append('Txcmin{0}'.format(i))
-            list.append('Txcmax{0}'.format(i))
-            list.append('Tcmax{0}'.format(i))
-            cfgStr.append('cur_min')
-            cfgStr.append('cur_crmin')
-            cfgStr.append('cur_crmax')
-            cfgStr.append('cur_max')
-            if( loop != 2 ):
-                outputStr.append('L{0}总电流最小值'.format(i))
-                outputStr.append('L{0}总电流下临界值'.format(i))
-                outputStr.append('L{0}总电流上临界值'.format(i))
-                outputStr.append('L{0}总电流最大值'.format(i))
-            else:
-                if( i != 1 ):
-                    outputStr.append('L{0}总电流最小值'.format(i))
-                    outputStr.append('L{0}总电流下临界值'.format(i))
-                    outputStr.append('L{0}总电流上临界值'.format(i))
-                    outputStr.append('L{0}总电流最大值'.format(i))
-                else:
-                    outputStr.append('C{0}总电流最小值'.format(i-1))
-                    outputStr.append('C{0}总电流下临界值'.format(i-1))
-                    outputStr.append('C{0}总电流上临界值'.format(i-1))
-                    outputStr.append('C{0}总电流最大值'.format(i-1))
-                    
-        self.checkAndSendTitleBar3(list , cfgStr , outputStr , 1)
-        list.clear()
-        cfgStr.clear()
-        outputStr.clear()
-        
-        for i in range(1 , line+1):
-            list.append('Tvmin{0}'.format(i))
-            list.append('Tvmax{0}'.format(i))
-            cfgStr.append('vol_min')
-            cfgStr.append('vol_max')
-            outputStr.append('L{0}总电压最小值'.format(i))
-            outputStr.append('L{0}总电压最大值'.format(i))
-        self.checkAndSendTitleBar3(list , cfgStr , outputStr , 2)
-        list.clear()
-        cfgStr.clear()
-        outputStr.clear()
-        
+       
+        for i in range(1 , 2+1):
+            list.append('Tem{0}'.format(i))
+            cfgStr.append('-')
+            outputStr.append('温度{0}当前值'.format(i))
+            
+        self.checkAndSendTitleBar3(list , cfgStr , outputStr , 8)
+    
+    def checkTem(self):
+        list=[]
+        cfgStr = []
+        outputStr = []    
         for i in range(1 , 2+1):
             list.append('Temmin{0}'.format(i))
             list.append('Temmax{0}'.format(i))
@@ -169,10 +137,23 @@ class Mpdu(MpduWeb):
             outputStr.append('温度{0}最大值'.format(i))
             
         self.checkAndSendTitleBar3(list , cfgStr , outputStr , 3)
-        list.clear()
-        cfgStr.clear()
-        outputStr.clear()
-        
+    
+    def checkCurHum(self):
+        list=[]
+        cfgStr = []
+        outputStr = []
+       
+        for i in range(1 , 2+1):
+            list.append('Hum{0}'.format(i))
+            cfgStr.append('-')
+            outputStr.append('湿度{0}当前值'.format(i))
+            
+        self.checkAndSendTitleBar3(list , cfgStr , outputStr , 9)
+    
+    def checkHum(self):
+        list=[]
+        cfgStr = []
+        outputStr = []
         for i in range(1 , 2+1):
             list.append('Hummin{0}'.format(i))
             list.append('Hummax{0}'.format(i))
@@ -182,9 +163,6 @@ class Mpdu(MpduWeb):
             outputStr.append('湿度{0}最大值'.format(i))
             
         self.checkAndSendTitleBar3(list , cfgStr , outputStr , 4)
-        list.clear()
-        cfgStr.clear()
-        outputStr.clear()
     
 
     def checkAndSendTitleBar3(self , list , cfgStr , outputStr , case):
@@ -192,11 +170,16 @@ class Mpdu(MpduWeb):
         zz = zip(list , cfgStr , outputStr)
         statusList = []
         messageList = []
-        for x,y,z in zz:
-            #Tvmin = self.driver.find_element_by_id(x).get_attribute('value')
-            status , message = self.checkStr( x , cfg[y] , z)
-            statusList.append(status)
-            messageList.append(message)
+        if( case < 7 ):
+            for x,y,z in zz:
+                status , message = self.checkStr( x , cfg[y] , z)
+                statusList.append(status)
+                messageList.append(message)
+        elif( case > 7 ):
+            for x,y,z in zz:
+                status , message = self.checkTemAndHum( x , z )
+                statusList.append(status)
+                messageList.append(message)
         
         phaseStr = zip(statusList , messageList)
         flag = False
@@ -219,10 +202,14 @@ class Mpdu(MpduWeb):
             elif( case == 4):
                 self.sendtoMainapp("设置湿度最小值成功;1" )
                 self.sendtoMainapp("设置湿度最大值成功;1" )
+            elif( case == 8):
+                self.sendtoMainapp("检查温度当前值成功;1" )
+            elif( case == 9):
+                self.sendtoMainapp("检查湿度当前值成功;1" )
         statusList.clear()
         messageList.clear()
             
-    def checkTitleBar3(self , opLists):
+    def checkTitleBar3(self ):
         cfg = self.cfgs
         self.divClick(2)
         time.sleep(0.35)
@@ -230,58 +217,6 @@ class Mpdu(MpduWeb):
         time.sleep(0.35)
         
         op = cfg['outputs']
-        if( int(cfg['series']) == 2 or int(cfg['series']) == 4):#输出位
-            list=[]
-            cfgStr = []
-            outputStr = []
-           
-            for i in range(1 , int(op)+1):
-                list.append('min{0}'.format(i))
-                list.append('xmin{0}'.format(i))
-                list.append('xmax{0}'.format(i))
-                list.append('max{0}'.format(i))
-                cfgStr.append('output_min')
-                cfgStr.append('output_crmin')
-                cfgStr.append('output_crmax')
-                cfgStr.append('output_max')
-                outputStr.append('输出位{0}电流最小值'.format(i))
-                outputStr.append('输出位{0}电流下临界值'.format(i))
-                outputStr.append('输出位{0}电流上临界值'.format(i))
-                outputStr.append('输出位{0}电流最大值'.format(i))
-                j = 0
-                while( j < len(opLists) ):
-                    if( len(opLists[j]) != 0):
-                        if( opLists[j][0] == i ):
-                            if( int(cfg['series']) == 3 or int(cfg['series']) == 4):
-                                totalms = 1
-                            else:
-                                totalms = 0
-                            jsSheet = 'xmlset = createXmlRequest();xmlset.onreadystatechange = setdata;ajaxget(xmlset, \"/setunitlimit?a=\" + {action} + \"&b=\" + {min} + \"&c=\" + {xmin} + \"&d=\" + {xmax}+ \"&e=\" + {max}+ \"&f=\" + {ms} +  \"&\");'.format( action = i , min = opLists[j][2]*10 , xmin = opLists[j][3]*10 , xmax = opLists[j][4]*10 , max = opLists[j][5]*10 , ms = totalms)
-                            self.execJs(jsSheet)
-                            time.sleep(0.25)
-                    j+=1
-                    
-                
-            zz = zip(list , cfgStr , outputStr)
-            
-            statusList = []
-            messageList = []
-            for x,y,z in zz:
-                status , message = self.checkStr( x , cfg[y] , z) 
-                statusList.append(status)
-                messageList.append(message)
-                
-            opStr = zip(statusList , messageList)
-            flag = False
-            for x,y in opStr:
-                if( x==0 or x==2 ):
-                    self.sendtoMainapp( y )
-                    flag = True
-            if( flag == False):
-                self.sendtoMainapp("设置输出位电流最小值成功;1" )
-                self.sendtoMainapp("设置输出位电流下临界值成功;1" )
-                self.sendtoMainapp("设置输出位电流上临界值成功;1" )
-                self.sendtoMainapp("设置输出位电流最大值成功;1" )
         if( int(cfg['series']) == 3 or int(cfg['series']) == 4):#延时
             try:
                 message =''
@@ -290,10 +225,6 @@ class Mpdu(MpduWeb):
                 message =  '网页上找不到{0}ID;'.format('延时上电')
                 self.sock.sendto(message.encode('utf-8') , (self.ip , self.port))
                 return
-            self.setItById('totalms', 1 , '上电延时')
-            jsSheet = 'var ms = parseFloat(document.getElementById(\"totalms\").value);var xmlset = createXmlRequest();xmlset.onreadystatechange = setdata;ajaxget(xmlset, \"/settime?a=\" + ms + \"&\");'
-            self.execJs(jsSheet)
-            time.sleep(0.35)
             self.checkDelayTime(op)
             
     def checkDelayTime(self , op):
@@ -409,10 +340,60 @@ class Mpdu(MpduWeb):
                 index += 1
         return lists
         
-    def checkTitleBar5(self):
+    def confirmTips(self , onFlag ):
         cfg = self.cfgs
-        self.divClick(2)
+        op = int(cfg['outputs'])
+        if( onFlag == True ):
+            jsSheet = 'if(confirm("输出位指示灯是否顺序打开")){alert("确认顺序打开");}else{alert("不是顺序打开");}'
+            self.execJs(jsSheet)
+            time.sleep(1)
+            while( True ):
+                alert = self.driver.switch_to_alert().text
+                if( alert == '输出位指示灯是否顺序打开' ):
+                    time.sleep(1)
+                elif( alert == '确认顺序打开' ):
+                    self.sendtoMainapp('输出位指示灯确认顺序打开;1')
+                    break
+                elif( alert == '不是顺序打开' ):
+                    self.sendtoMainapp('输出位指示灯不是顺序打开;0')
+                    break
+        else:
+            jsSheet = 'if(confirm("输出位指示灯是否顺序关闭")){alert("确认顺序关闭");}else{alert("不是顺序关闭");}'
+            self.execJs(jsSheet)
+            time.sleep(1)
+            while( True ):
+                alert = self.driver.switch_to_alert().text
+                if( alert == '输出位指示灯是否顺序关闭' ):
+                    time.sleep(1)
+                elif( alert == '确认顺序关闭' ):
+                    self.sendtoMainapp('输出位指示灯确认顺序关闭;1')
+                    break
+                elif( alert == '不是顺序关闭' ):
+                    self.sendtoMainapp('输出位指示灯不是顺序关闭;0')
+                    break
+        self.driver.switch_to.alert.accept()
+        time.sleep(op)
+    
+    def openOrOffTitleBar5(self , onFlag):
+        cfg = self.cfgs
+        #self.divClick(2)
         
+        if( int(self.cfgs['security']) == 1 ):
+            time.sleep(1)
+        time.sleep(0.35)
+        self.driver.find_element_by_id("titlebar5").click()
+        time.sleep(0.35)
+        if( onFlag == True ):
+            self.driver.find_element_by_id('seton1').click()
+        else:
+            self.driver.find_element_by_id('setoff1').click()
+    
+    def checkTitleBar5(self , onFlag):
+        cfg = self.cfgs
+        #self.divClick(2)
+        
+        if( int(self.cfgs['security']) == 1 ):
+            time.sleep(1)
         time.sleep(0.35)
         self.driver.find_element_by_id("titlebar5").click()
         time.sleep(0.35)
@@ -420,13 +401,21 @@ class Mpdu(MpduWeb):
         op = cfg['outputs']
         statusList = []
         messageList = []
+        
+        
         for i in range(1 , int(op)+1):
             sw = 'Csw{0}'.format(i)
             status , message = '' ,''
-            if( int(cfg['language']) == 1 ):
-                status , message = self.checkSWStr( sw , '开' , '开关{0}'.format(i))
+            if( onFlag == True):
+                if( int(cfg['language']) == 1 ):
+                    status , message = self.checkSWStr( sw , '开' , '开关{0}'.format(i))
+                else:
+                    status , message = self.checkSWStr( sw , 'ON' , '开关{0}'.format(i))
             else:
-                status , message = self.checkSWStr( sw , 'ON' , '开关{0}'.format(i))
+                if( int(cfg['language']) == 1 ):
+                    status , message = self.checkSWStr( sw , '关' , '开关{0}'.format(i))
+                else:
+                    status , message = self.checkSWStr( sw , 'OFF' , '开关{0}'.format(i))
             statusList.append(status)
             messageList.append(message)
             
@@ -437,7 +426,7 @@ class Mpdu(MpduWeb):
                 self.sendtoMainapp(y)
                 flag = True
         if( flag == False):
-            self.sendtoMainapp("设置开关成功;1" )
+            self.sendtoMainapp("网页开关状态检查成功;1" )
     
     def checkTime(self):
         self.divClick(4)
@@ -447,10 +436,20 @@ class Mpdu(MpduWeb):
         self.driver.find_element_by_id("biao6").click()
         time.sleep(0.5)
         
-        #print( self.driver.find_element_by_id('loctime').text)
-        strlen = len(self.driver.find_element_by_id('loctime').text)
-        
-        if( self.driver.find_element_by_id('loctime').text[0:strlen-4]==self.driver.find_element_by_id('devtime1').text[0:strlen-4]):
-            self.sendtoMainapp("设置时间成功;1" )
+        nowTime = self.driver.find_element_by_id('loctime').text.split( )
+        devTime = self.driver.find_element_by_id('devtime1').text.split( )
+        if( nowTime[0] == devTime[0]):
+            h1 , m1 , s1 = nowTime[1].split(':')
+            t1 = int(h1)*3600 + int(m1)*60 + int(s1)
+            h2 , m2 , s2 = devTime[1].split(':')
+            t2 = int(h2)*3600 + int(m2)*60 + int(s2)
+            if( abs( t1-t2 ) >= 30*60 ):
+                self.sendtoMainapp("设置时间失败;0" )
+                return False
+            else:
+                print(abs(t1-t2))
+                self.sendtoMainapp("设置时间成功;1" )
+                return True
         else:
             self.sendtoMainapp("设置时间失败;0" )
+            return False
