@@ -32,8 +32,8 @@ class MpduHuawei(MpduWeb):
             self.confirmTips( False )
             self.checkTitleBar5( False )
             self.openOrOffTitleBar5( True )
-            self.confirmTips( True )
-            self.checkTitleBar5( True )
+            #self.confirmTips( True )
+            #self.checkTitleBar5( True )
         self.clearEnergy()
         
         self.checkTime()
@@ -62,11 +62,14 @@ class MpduHuawei(MpduWeb):
             self.sendtoMainapp(message)
             
     def close(self):
-        time.sleep(1.5)
+        try:
+            time.sleep(1)
+            self.driver.quit()
         #print(datetime.datetime.now())
-        self.driver.quit()
-        #print(datetime.datetime.now())
-        time.sleep(3)
+        except:
+            print("except")
+        finally:
+            time.sleep(5)
         
 
     def changetocorrect(self):
@@ -148,10 +151,10 @@ class MpduHuawei(MpduWeb):
         self.checkTvol()
         
         self.checkTem()
-        self.checkCurTem()
+        #self.checkCurTem()
       
         self.checkHum()
-        self.checkCurHum()
+        #self.checkCurHum()
         
     def checkTcur(self):
         list=[]
@@ -353,10 +356,10 @@ class MpduHuawei(MpduWeb):
                     if( len(opLists[j]) != 0):
                         if( opLists[j][0] == i ):
                             index = opLists[j][6]
-                            cfgStr[len(cfgStr)-4]='op_{0}_min'.format(index)
-                            cfgStr[len(cfgStr)-3]='op_{0}_crmin'.format(index)
-                            cfgStr[len(cfgStr)-2]='op_{0}_crmax'.format(index)
-                            cfgStr[len(cfgStr)-1]='op_{0}_max'.format(index)
+                            cfgStr[(i-1)*4]='op_{0}_min'.format(index)
+                            cfgStr[(i-1)*4+1]='op_{0}_crmin'.format(index)
+                            cfgStr[(i-1)*4+2]='op_{0}_crmax'.format(index)
+                            cfgStr[(i-1)*4+3]='op_{0}_max'.format(index)
                             
                     j+=1
                 
@@ -433,6 +436,7 @@ class MpduHuawei(MpduWeb):
         time.sleep(0.35)
         if( onFlag == True ):
             self.driver.find_element_by_id('seton1').click()
+            time.sleep(24)
         else:
             self.driver.find_element_by_id('setoff1').click()
     

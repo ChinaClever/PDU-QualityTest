@@ -59,11 +59,14 @@ class Mpdu(MpduWeb):
             self.sendtoMainapp(message)
             
     def close(self):
-        time.sleep(1.5)
+        try:
+            time.sleep(1)
+            self.driver.quit()
         #print(datetime.datetime.now())
-        self.driver.quit()
-        #print(datetime.datetime.now())
-        time.sleep(3)
+        except:
+            print("except")
+        finally:
+            time.sleep(5)
         
 
     def changetocorrect(self):

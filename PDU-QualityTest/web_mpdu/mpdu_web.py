@@ -252,34 +252,37 @@ class MpduWeb:
     def checkVersion(self):
         cfg = self.cfgs
         try:
-            self.divClick(1)
-            message = '登陆成功;1'
-            self.sendtoMainapp(message)
-            jsSheet = 'if(confirm("确认网页Logo是否正确")){alert("Logo正确");}else{alert("Logo错误");}'
-            self.execJs(jsSheet)
-            time.sleep(1)
-            while( True ):
-                alert = self.driver.switch_to_alert().text
-                if( alert == '确认网页Logo是否正确' ):
-                    time.sleep(1)
-                elif( alert == 'Logo正确' ):
-                    self.sendtoMainapp('Logo正确;1')
-                    break
-                elif( alert == 'Logo错误' ):
-                    self.sendtoMainapp('Logo错误;0')
-                    break
-            self.driver.switch_to.alert.accept()
-            
-            time.sleep(5)
-            tt = self.driver.find_element_by_xpath('//table[2]/tbody/tr[2]/td[2]')
-            #print(tt.text)
-            if( cfg['versions'] == ''):
-                return 2,'软件版本空;2'
-                
-            if( cfg['versions'] in tt.text and len(str(cfg['versions'])) >= 2 ):
-                return 1,'软件版本正确;1'
-            else:
-                return 0,'软件版本错误;0'
+            try:
+                self.divClick(1)
+                message = '登陆成功;1'
+                self.sendtoMainapp(message)
+                jsSheet = 'if(confirm("确认网页Logo是否正确")){alert("Logo正确");}else{alert("Logo错误");}'
+                self.execJs(jsSheet)
+                time.sleep(1)
+                while( True ):
+                    alert = self.driver.switch_to_alert().text
+                    if( alert == '确认网页Logo是否正确' ):
+                        time.sleep(1)
+                    elif( alert == 'Logo正确' ):
+                        self.sendtoMainapp('Logo正确;1')
+                        break
+                    elif( alert == 'Logo错误' ):
+                        self.sendtoMainapp('Logo错误;0')
+                        break
+                self.driver.switch_to.alert.accept()
+            except :
+                print('exception')
+            finally:
+                time.sleep(5)
+                tt = self.driver.find_element_by_xpath('//table[2]/tbody/tr[2]/td[2]')
+                #print(tt.text)
+                if( cfg['versions'] == ''):
+                    return 2,'软件版本空;2'
+                    
+                if( cfg['versions'] in tt.text and len(str(cfg['versions'])) >= 2 ):
+                    return 1,'软件版本正确;1'
+                else:
+                    return 0,'软件版本错误;0'
         except UnexpectedAlertPresentException:
             message = '登陆失败，账号密码错误;0'
             return 0,message
@@ -304,54 +307,59 @@ class MpduWeb:
 
     def setAlarmTcur(self):
         if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['security']) == 1 ):
-            time.sleep(1)
+            time.sleep(2)
        
         self.setItById('Tcmin1' , '1' ,'总电流最小值')
         self.setItById('Txcmin1' , '1' ,'总电流下限值')
-        time.sleep(0.35)
-        self.driver.find_element_by_id("save4").click()
-        time.sleep(0.35)
-        jsSheet = 'if(confirm("请检查ALM指示灯是否亮起、蜂鸣器是否蜂鸣、声光告警器是否亮起")){alert("是");}else{alert("否");}'
-        self.execJs(jsSheet)
         time.sleep(1)
-        #print(alert)
-        while( True ):
-            alert = self.driver.switch_to_alert().text
-            if( alert == '请检查ALM指示灯是否亮起、蜂鸣器是否蜂鸣、声光告警器是否亮起' ):
-                time.sleep(1)
-            elif( alert == '是' ):
-                self.sendtoMainapp('ALM指示灯已亮起、蜂鸣器已蜂鸣、声光告警器已亮起;1')
-                break
-            elif( alert == '否' ):
-                self.sendtoMainapp('ALM指示灯未亮起、蜂鸣器未蜂鸣、声光告警器未亮起;0')
-                break
-        
-        self.driver.switch_to.alert.accept()
+        self.driver.find_element_by_id("save4").click()
+        time.sleep(1)
+        try:
+            jsSheet = 'if(confirm("请检查ALM指示灯是否亮起、蜂鸣器是否蜂鸣、声光告警器是否亮起")){alert("是");}else{alert("否");}'
+            self.execJs(jsSheet)
+            #print(alert)
+            while( True ):
+                alert = self.driver.switch_to_alert().text
+                if( alert == '请检查ALM指示灯是否亮起、蜂鸣器是否蜂鸣、声光告警器是否亮起' ):
+                    time.sleep(1)
+                elif( alert == '是' ):
+                    self.sendtoMainapp('ALM指示灯已亮起、蜂鸣器已蜂鸣、声光告警器已亮起;1')
+                    break
+                elif( alert == '否' ):
+                    self.sendtoMainapp('ALM指示灯未亮起、蜂鸣器未蜂鸣、声光告警器未亮起;0')
+                    break
+            
+            self.driver.switch_to.alert.accept()
+        except :
+            print("exception")
+            
         
     def setNormalTcur(self):
         if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['security']) == 1 ):
-            time.sleep(1)
+            time.sleep(2)
         
         self.setItById('Tcmin1' , '0' ,'总电流最小值')
         self.setItById('Txcmin1' , '0' ,'总电流下限值')
-        time.sleep(0.35)
-        self.driver.find_element_by_id("save4").click()
-        time.sleep(0.35)
-        jsSheet = 'if(confirm("请检查ALM指示灯是否灭、蜂鸣器是否蜂鸣停止、声光告警器是否灭")){alert("是");}else{alert("否");}'
-        self.execJs(jsSheet)
         time.sleep(1)
-        while( True ):
-            alert = self.driver.switch_to_alert().text
-            if( alert == '请检查ALM指示灯是否灭、蜂鸣器是否蜂鸣停止、声光告警器是否灭' ):
-                time.sleep(1)
-            elif( alert == '是' ):
-                self.sendtoMainapp('ALM指示灯已灭、蜂鸣器已蜂鸣停止、声光告警器已灭;1')
-                break
-            elif( alert == '否' ):
-                self.sendtoMainapp('ALM指示灯未灭、蜂鸣器未蜂鸣停止、声光告警器未灭;0')
-                break
-        
-        self.driver.switch_to.alert.accept()
+        self.driver.find_element_by_id("save4").click()
+        time.sleep(1)
+        try:
+            jsSheet = 'if(confirm("请检查ALM指示灯是否灭、蜂鸣器是否蜂鸣停止、声光告警器是否灭")){alert("是");}else{alert("否");}'
+            self.execJs(jsSheet)
+            while( True ):
+                alert = self.driver.switch_to_alert().text
+                if( alert == '请检查ALM指示灯是否灭、蜂鸣器是否蜂鸣停止、声光告警器是否灭' ):
+                    time.sleep(1)
+                elif( alert == '是' ):
+                    self.sendtoMainapp('ALM指示灯已灭、蜂鸣器已蜂鸣停止、声光告警器已灭;1')
+                    break
+                elif( alert == '否' ):
+                    self.sendtoMainapp('ALM指示灯未灭、蜂鸣器未蜂鸣停止、声光告警器未灭;0')
+                    break
+            
+            self.driver.switch_to.alert.accept()
+        except :
+            print("exception")
 
 
 
