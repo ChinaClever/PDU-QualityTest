@@ -52,7 +52,7 @@ class MpduHuawei(MpduWeb):
         for num in range(0, 2):
             self.execJs(jsSheet.format(num))
             self.driver.find_element_by_id('biao{0}'.format(num+1)).click()
-            time.sleep(1)
+            time.sleep(2)
             tt = self.driver.find_element_by_id('evenlognum').text
             if( tt != 'Total : 0'):
                 self.sendtoMainapp(ListMessage[num])
@@ -391,41 +391,50 @@ class MpduHuawei(MpduWeb):
                 message =  '网页上找不到{0}ID;'.format('延时上电')
                 self.sock.sendto(message.encode('utf-8') , (self.ip , self.port))
                 return
+            self.setItById('totalms', 1 , '上电延时')
             
+            jsSheet = 'var a = parseFloat(document.getElementById(\"totalms\").value);xmlset = createXmlRequest();xmlset.onreadystatechange = setdata;ajaxget(xmlset, \"/settime?a=\" + {0} + \"&\")'
+            
+            self.execJs(jsSheet.format(1))
+            time.sleep(1)
             self.checkDelayTime(op)
             
     def confirmTips(self , onFlag ):
         cfg = self.cfgs
         op = 24
-        if( onFlag == True ):
-            jsSheet = 'if(confirm("输出位指示灯是否顺序打开")){alert("确认顺序打开");}else{alert("不是顺序打开");}'
-            self.execJs(jsSheet)
-            while( True ):
-                alert = self.driver.switch_to_alert().text
-                if( alert == '输出位指示灯是否顺序打开' ):
-                    time.sleep(1)
-                elif( alert == '确认顺序打开' ):
-                    self.sendtoMainapp('输出位指示灯确认顺序打开;1')
-                    break
-                elif( alert == '不是顺序打开' ):
-                    self.sendtoMainapp('输出位指示灯不是顺序打开;0')
-                    break
-        else:
-            jsSheet = 'if(confirm("输出位指示灯是否顺序关闭")){alert("确认顺序关闭");}else{alert("不是顺序关闭");}'
-            self.execJs(jsSheet)
-            
-            while( True ):
-                alert = self.driver.switch_to_alert().text
-                if( alert == '输出位指示灯是否顺序关闭' ):
-                    time.sleep(1)
-                elif( alert == '确认顺序关闭' ):
-                    self.sendtoMainapp('输出位指示灯确认顺序关闭;1')
-                    break
-                elif( alert == '不是顺序关闭' ):
-                    self.sendtoMainapp('输出位指示灯不是顺序关闭;0')
-                    break
-        self.driver.switch_to.alert.accept()
-        time.sleep(24)
+        try:
+            if( onFlag == True ):
+                jsSheet = 'if(confirm("输出位指示灯是否顺序打开")){alert("确认顺序打开");}else{alert("不是顺序打开");}'
+                self.execJs(jsSheet)
+                while( True ):
+                    alert = self.driver.switch_to_alert().text
+                    if( alert == '输出位指示灯是否顺序打开' ):
+                        time.sleep(1)
+                    elif( alert == '确认顺序打开' ):
+                        self.sendtoMainapp('输出位指示灯确认顺序打开;1')
+                        break
+                    elif( alert == '不是顺序打开' ):
+                        self.sendtoMainapp('输出位指示灯不是顺序打开;0')
+                        break
+            else:
+                jsSheet = 'if(confirm("输出位指示灯是否顺序关闭")){alert("确认顺序关闭");}else{alert("不是顺序关闭");}'
+                self.execJs(jsSheet)
+                
+                while( True ):
+                    alert = self.driver.switch_to_alert().text
+                    if( alert == '输出位指示灯是否顺序关闭' ):
+                        time.sleep(1)
+                    elif( alert == '确认顺序关闭' ):
+                        self.sendtoMainapp('输出位指示灯确认顺序关闭;1')
+                        break
+                    elif( alert == '不是顺序关闭' ):
+                        self.sendtoMainapp('输出位指示灯不是顺序关闭;0')
+                        break
+            self.driver.switch_to.alert.accept()
+        except  :
+            print('exception')
+        finally:
+            time.sleep(24)
     
     def openOrOffTitleBar5(self , onFlag):
         cfg = self.cfgs
@@ -481,6 +490,8 @@ class MpduHuawei(MpduWeb):
             self.sendtoMainapp("网页开关状态检查成功;1" )
     
     def checkDelayTime(self , op):
+        self.driver.find_element_by_id("titlebar3").click()
+        time.sleep(1)
         statusList = []
         messageList = []
         for i in range(1 , int(op)+1):
@@ -548,7 +559,7 @@ class MpduHuawei(MpduWeb):
         for i in range(1 , 4):
             self.execJs(jsSheet.format(i))
             time.sleep(1)
-        time.sleep(1)
+        time.sleep(6)
         self.driver.find_element_by_id("titlebar4").click()
         time.sleep(1)
         self.checkEnergy()
@@ -608,7 +619,7 @@ class MpduHuawei(MpduWeb):
             t1 = int(h1)*3600 + int(m1)*60 + int(s1)
             h2 , m2 , s2 = devTime[1].split(':')
             t2 = int(h2)*3600 + int(m2)*60 + int(s2)
-            if( abs( t1-t2 ) >= 30*60 ):
+            if( abs( t1-t2 ) >= 10*60 ):
                 self.sendtoMainapp("设置时间失败;0" )
                 return False
             else:

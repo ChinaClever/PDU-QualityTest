@@ -446,7 +446,7 @@ class Mpdu(MpduWeb):
             t1 = int(h1)*3600 + int(m1)*60 + int(s1)
             h2 , m2 , s2 = devTime[1].split(':')
             t2 = int(h2)*3600 + int(m2)*60 + int(s2)
-            if( abs( t1-t2 ) >= 30*60 ):
+            if( abs( t1-t2 ) >= 10*60 ):
                 self.sendtoMainapp("设置时间失败;0" )
                 return False
             else:

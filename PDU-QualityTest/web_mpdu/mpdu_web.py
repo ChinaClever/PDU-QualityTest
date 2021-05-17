@@ -307,7 +307,7 @@ class MpduWeb:
 
     def setAlarmTcur(self):
         if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['security']) == 1 ):
-            time.sleep(2)
+            time.sleep(3)
        
         self.setItById('Tcmin1' , '1' ,'总电流最小值')
         self.setItById('Txcmin1' , '1' ,'总电流下限值')
@@ -336,7 +336,7 @@ class MpduWeb:
         
     def setNormalTcur(self):
         if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['security']) == 1 ):
-            time.sleep(2)
+            time.sleep(3)
         
         self.setItById('Tcmin1' , '0' ,'总电流最小值')
         self.setItById('Txcmin1' , '0' ,'总电流下限值')

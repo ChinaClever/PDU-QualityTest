@@ -78,12 +78,12 @@ class Mpdu2(MpduWeb):
         self.divClick(6)
         time.sleep(1)
         if( int(self.cfgs['security']) == 1 ):
-            time.sleep(2.5)
+            time.sleep(3)
         for num in range(0, 2):
             self.execJs(jsSheet.format(num))
             time.sleep(0.35)
             self.driver.find_element_by_id('biao{0}'.format(num+1)).click()
-            time.sleep(1)
+            time.sleep(2)
             tt = self.driver.find_element_by_id('evenlognum').text
             if( tt != 'Total : 0'):
                 self.sendtoMainapp(ListMessage[num])
@@ -795,7 +795,7 @@ class Mpdu2(MpduWeb):
             t1 = int(h1)*3600 + int(m1)*60 + int(s1)
             h2 , m2 , s2 = devTime[1].split(':')
             t2 = int(h2)*3600 + int(m2)*60 + int(s2)
-            if( abs( t1-t2 ) >= 30*60 ):
+            if( abs( t1-t2 ) >= 10*60 ):
                 self.sendtoMainapp("检查时间时分秒失败;0" )
                 return False
             else:

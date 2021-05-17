@@ -28,4 +28,6 @@ if __name__ == '__main__':
         app3 = MpduHuawei()
         app3.start_fun(sock , dest_ip , dest_port)
         app3.close()
+    sock.close()
+    time.sleep(1)
 
