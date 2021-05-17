@@ -307,13 +307,13 @@ class MpduWeb:
 
     def setAlarmTcur(self):
         if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['security']) == 1 ):
-            time.sleep(3)
+            time.sleep(4)
        
         self.setItById('Tcmin1' , '1' ,'总电流最小值')
         self.setItById('Txcmin1' , '1' ,'总电流下限值')
-        time.sleep(1)
+        time.sleep(2)
         self.driver.find_element_by_id("save4").click()
-        time.sleep(1)
+        time.sleep(2)
         try:
             jsSheet = 'if(confirm("请检查ALM指示灯是否亮起、蜂鸣器是否蜂鸣、声光告警器是否亮起")){alert("是");}else{alert("否");}'
             self.execJs(jsSheet)
@@ -336,13 +336,13 @@ class MpduWeb:
         
     def setNormalTcur(self):
         if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['security']) == 1 ):
-            time.sleep(3)
+            time.sleep(4)
         
         self.setItById('Tcmin1' , '0' ,'总电流最小值')
         self.setItById('Txcmin1' , '0' ,'总电流下限值')
-        time.sleep(1)
+        time.sleep(2)
         self.driver.find_element_by_id("save4").click()
-        time.sleep(1)
+        time.sleep(2)
         try:
             jsSheet = 'if(confirm("请检查ALM指示灯是否灭、蜂鸣器是否蜂鸣停止、声光告警器是否灭")){alert("是");}else{alert("否");}'
             self.execJs(jsSheet)
