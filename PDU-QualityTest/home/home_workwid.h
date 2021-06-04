@@ -21,6 +21,7 @@ signals:
     void startSig();
     void typeSig(int i);
     void enabledSig(bool en);
+    void savePopupSig(bool en);
 
 protected:
     void initLayout();
@@ -51,6 +52,7 @@ private slots:
     void on_typeComboBox_currentIndexChanged(int index);
     void on_snCheckBox_clicked(bool checked);
     void recvVerSlot(int ver);
+    void on_guideCheck_clicked(bool checked);
 
 public slots:
     void errSlot() {QTimer::singleShot(5,this,SLOT(saveErrSlot()));}
@@ -65,6 +67,7 @@ private:
     sDataPacket *mPacket;
     Home_SetOpDlg *mSetOpDlg;
     Test_CoreThread *mCoreThread;
+    bool isCheck;
 };
 
 #endif // HOME_WORKWID_H

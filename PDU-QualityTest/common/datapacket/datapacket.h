@@ -103,6 +103,7 @@ struct sDevType
     uchar loop[6];
     uchar ip_lcd;
     uchar security;
+    uchar popup;
 
     QString versions;
 };

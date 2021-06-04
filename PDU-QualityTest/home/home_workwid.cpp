@@ -115,6 +115,12 @@ void Home_WorkWid::updateResult()
 {
     QString style;
     QString str = tr("---");
+    if(mItem->modeId && isCheck) {
+        QString str = getTime().at(1);
+        if(!str.toInt() || (mId<40)) mPro->result = Test_Fail;
+    } else if(isCheck) {
+        if(mId < 14) mPro->result = Test_Fail;
+    }
     if (Test_Fail == mPro->result) {
         str = tr("失败");
         style = "background-color:red; color:rgb(255, 255, 255);";
@@ -273,7 +279,7 @@ bool Home_WorkWid::initWid()
             mPro->result = Test_Fail;
         }
     }
-
+    if(mPro->step == Test_Start) isCheck = true; else isCheck = false;
     return ret;
 }
 
@@ -302,6 +308,7 @@ void Home_WorkWid::recvVerSlot(int ver)
             ui->snCheckBox->setChecked(false);
 
     }
+    initTypeComboBox();
 }
 
 void Home_WorkWid::saveFunSlot()
@@ -372,10 +379,19 @@ void Home_WorkWid::initTypeComboBox()
     mSetOpDlg->updateIndex(index);
     ui->typeComboBox->setCurrentIndex(index);
     emit typeSig(index);
+    sDevData* ptr = mPacket->getMpdu();
+    ui->guideCheck->setChecked(ptr->dt.popup);
 }
 
 void Home_WorkWid::on_snCheckBox_clicked(bool checked)
 {
     mItem->enSn = checked;
     if(!checked) MsgBox::information(this, tr("注意：创建序列号有利于产品溯源。你已选择不创建序列号。"));
+}
+
+void Home_WorkWid::on_guideCheck_clicked(bool checked)
+{
+    sDevData* ptr = mPacket->getMpdu();
+    ptr->dt.popup = checked?1:0;
+    emit savePopupSig(checked);
 }

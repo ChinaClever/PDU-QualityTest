@@ -28,6 +28,7 @@ void Test_NetWork::initFunSlot()
 
 void Test_NetWork::workDown()
 {
+    QReadLocker locker(mUdp->getLock());
     UdpBaseData *res = mUdp->getData();
     if(res) {
         QStringList list = QString(res->datagram).split(";");

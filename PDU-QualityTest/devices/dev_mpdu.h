@@ -11,6 +11,7 @@ public:
     static Dev_Mpdu *bulid(QObject *parent = nullptr);
 
     void save();
+    void savePopup(bool en);
 
 protected:
     QString cfgGroup(){return "mCfg";}

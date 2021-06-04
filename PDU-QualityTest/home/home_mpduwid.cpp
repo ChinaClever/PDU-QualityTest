@@ -90,3 +90,9 @@ void Home_MpduWid::indexHiddenSlot(int index)
     else
         ui->tabWidget->addTab( mAlarmWid ,tr("MPDU报警参数"));
 }
+
+void Home_MpduWid::savePopupSlot(bool en)
+{
+    if(mItem->modeId != MPDU) return;
+    mObj->savePopup(en);
+}

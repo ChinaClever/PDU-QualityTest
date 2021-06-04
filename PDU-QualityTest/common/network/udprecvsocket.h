@@ -26,6 +26,7 @@ public:
 
     bool initSocket(int port);
     UdpBaseData *getData(void);
+    QReadWriteLock *getLock(void);
 
 protected:
     bool dataReceived(void);
