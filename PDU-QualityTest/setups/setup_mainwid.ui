@@ -135,7 +135,7 @@
          <string notr="true"/>
         </property>
         <property name="maximum">
-         <number>9</number>
+         <number>15</number>
         </property>
        </widget>
       </item>
