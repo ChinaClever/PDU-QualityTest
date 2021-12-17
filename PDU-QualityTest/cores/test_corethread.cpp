@@ -46,7 +46,7 @@ bool Test_CoreThread::startProcess()
     if(ret){
         mProcess->close();
         mProcess->start(exe);
-        ret = mProcess->waitForFinished(420*1000);
+        ret = mProcess->waitForFinished(420*1000); //mProcess->execute(exe);
         mLogs->updatePro(tr("网页检查功能退出"), ret , 1);
     }
 
