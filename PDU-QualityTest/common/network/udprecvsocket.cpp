@@ -47,7 +47,15 @@ bool UdpRecvSocket::initSocket(int port)
     return ret;
 }
 
-
+/**
+ * @brief 获取锁
+ * @param data
+ * @return
+ */
+QReadWriteLock *UdpRecvSocket::getLock(void)
+{
+    return mRecLock;
+}
 
 /**
  * @brief 获取UDP数据包
@@ -58,7 +66,7 @@ UdpBaseData *UdpRecvSocket::getData(void)
 {
     UdpBaseData *data = NULL;
 
-    QWriteLocker locker(mRecLock); /*获取线程状态*/
+    //QWriteLocker locker(mRecLock); /*获取线程状态*/
     int ret = mUdpQueueData->size();
     if( ret > 0) {
         data = mUdpQueueData->dequeue();
@@ -78,6 +86,7 @@ bool UdpRecvSocket::dataReceived(void)
 {   
     if(mUdpSocket->hasPendingDatagrams()) // 是否有数据可读
     {
+        QWriteLocker locker(mRecLock);
         UdpBaseData *data = new UdpBaseData();
         if(data) {
             data->datagram.resize(mUdpSocket->pendingDatagramSize()); //让datagram 的大小为等待处理的数据报的大小，这样才能接收到完整的数据
@@ -87,7 +96,7 @@ bool UdpRecvSocket::dataReceived(void)
                                                &data->port);
             if(rtn > 0) {
                 if(data->datagram.size() < 1024) { /*数据最长不超过1024*/
-                    QWriteLocker locker(mRecLock);
+                    //QWriteLocker locker(mRecLock);
                     mUdpQueueData->enqueue(data);
                 }
             }

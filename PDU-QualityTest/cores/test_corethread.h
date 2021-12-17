@@ -15,6 +15,7 @@ protected:
     bool checkNet();
     bool startProcess();
     void workResult(bool res);
+    void openAllSwitch();
 
 protected slots:
     void initFunSlot();

@@ -209,7 +209,9 @@ bool Json_Build::saveJson( QJsonObject &json)
 {
     QJsonDocument jsonDoc(json);
     QByteArray ba = jsonDoc.toJson();
-    QString path = CfgCom::bulid()->pathOfData("pdu_id.json");
+    QString name = "pdu_id.json";
+    QDir dataDir(QCoreApplication::applicationDirPath());  //QDir::home()
+    QString path = dataDir.absoluteFilePath(name);
     QFile file(path);
     bool ret = false;
     if(file.exists())//文件存在则不需要再写
@@ -226,7 +228,6 @@ bool Json_Build::saveJson( QJsonObject &json)
             qDebug() << "write json file failed";
         }
     }
-
     return ret;
 }
 

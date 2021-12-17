@@ -35,6 +35,7 @@ void Home_MpduWid::initWid()
     mParamWid = new Home_MpduParamWid(ui->tabWidget);
     ui->tabWidget->addTab(mParamWid, str);
     connect(mParamWid, SIGNAL(indexHiddenSig(int)), this, SLOT(indexHiddenSlot(int)));
+    connect(mParamWid, SIGNAL(sendVerSig(int)), this, SIGNAL(sendMpduVerSig(int)));
 
     str = tr("MPDU报警参数");
     mAlarmWid = new Home_MpduAlarmWid(ui->tabWidget);
@@ -88,4 +89,10 @@ void Home_MpduWid::indexHiddenSlot(int index)
         ui->tabWidget->removeTab(1);
     else
         ui->tabWidget->addTab( mAlarmWid ,tr("MPDU报警参数"));
+}
+
+void Home_MpduWid::savePopupSlot(bool en)
+{
+    if(mItem->modeId != MPDU) return;
+    mObj->savePopup(en);
 }

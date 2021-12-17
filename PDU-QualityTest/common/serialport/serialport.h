@@ -18,7 +18,7 @@ public:
     bool isOpened(){return isOpen;}
     bool close(void);
 
-    void reflush();
+    int reflush();
     QStringList getList();
     QString getSerialName();
     bool isContains(const QString &name);

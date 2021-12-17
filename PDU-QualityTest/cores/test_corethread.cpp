@@ -46,7 +46,7 @@ bool Test_CoreThread::startProcess()
     if(ret){
         mProcess->close();
         mProcess->start(exe);
-        ret = mProcess->waitForFinished(120*1000);
+        ret = mProcess->waitForFinished(420*1000); //mProcess->execute(exe);
         mLogs->updatePro(tr("网页检查功能退出"), ret , 1);
     }
 
@@ -70,13 +70,15 @@ void Test_CoreThread::workResult(bool res)
     mPro->step = Test_Over;
 }
 
+
+
 void Test_CoreThread::workDown()
 {
     bool ret = true;
     mItem->sn.clear();
-    mLogs->updatePro(tr("自动检查已启动"));
-    if(mItem->enSn)mSn->snEnter();
-    ret = startProcess();
+    mLogs->updatePro(tr("质检已启动"));
+    if(mItem->enSn) ret = mSn->snEnter();
+    if(ret) ret = startProcess();
 
     workResult(ret);
 }

@@ -76,6 +76,7 @@ struct sObjCfg
 
     sUnitCfg tem; // 温度
     sUnitCfg hum; // 湿度
+    float ratedVol;// 额定电压
 };
 
 struct sDevType
@@ -103,6 +104,7 @@ struct sDevType
     uchar loop[6];
     uchar ip_lcd;
     uchar security;
+    uchar popup;
 
     QString versions;
 };
@@ -123,7 +125,8 @@ struct sDevData
 enum {
     Test_Fun, // 功能
     Test_Start, // 开始
-    Test_vert, // 验证
+    Test_Manual,
+    Test_vert, // 验证    
     Test_Over, // 终止
     Test_End, // 完成
 

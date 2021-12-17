@@ -11,6 +11,7 @@ public:
     sDevData *getDev() {return mDev;}
 
     virtual void save()=0;
+    virtual void savePopup(bool en)=0;
 
 protected:
     virtual QString cfgGroup()=0;

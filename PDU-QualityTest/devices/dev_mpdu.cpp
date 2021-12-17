@@ -39,6 +39,7 @@ void Dev_Mpdu::initType()
     ptr->level = read("level", 0).toInt();
     ptr->mpdu_ver = read("mpdu_ver", 2).toInt();
     ptr->security = read("security", 0).toInt();
+    ptr->popup = read("popup" , 0).toInt();
 
     for(int i=0; i<6; ++i) ptr->loop[i] = read(QString("loop_%1").arg(i+1), 8).toInt();
     for(int i=0; i<3; ++i) ptr->board[i] = read(QString("board_%1").arg(i+1), 8).toInt();
@@ -61,6 +62,7 @@ void Dev_Mpdu::writeType()
     write("level", ptr->level);
     write("mpdu_ver", ptr->mpdu_ver);
     write("security", ptr->security);
+    write("popup", ptr->popup);
 
     for(int i=0; i<6; ++i) write(QString("loop_%1").arg(i+1), ptr->loop[i]);
     for(int i=0; i<3; ++i) write(QString("board_%1").arg(i+1), ptr->board[i]);
@@ -75,6 +77,8 @@ void Dev_Mpdu::initData()
     initUnit("tem", ptr->tem);
     initUnit("hum", ptr->hum);
     initUnit("output", ptr->output, 1);
+
+    ptr->ratedVol = read("ratedVol", 230).toFloat();
 
     for(int i=0; i<OpSize; ++i) {
         QString str = "op_" + QString::number(i+1);
@@ -92,6 +96,8 @@ void Dev_Mpdu::writeData()
     writeUnit("hum", ptr->hum);
     writeUnit("output", ptr->output, 1);
 
+    write("ratedVol", QString::number(ptr->ratedVol));
+
     for(int i=0; i<OpSize; ++i) {
         QString str = "op_" + QString::number(i+1);
         writeUnit(str, ptr->opCur[i], 2);
@@ -108,4 +114,11 @@ void Dev_Mpdu::save()
 {
     writeType();
     writeData();
+}
+
+void Dev_Mpdu::savePopup(bool en)
+{
+    sDevType *ptr = mDt;
+    ptr->popup = en?1:0;
+    write("popup", ptr->popup);
 }

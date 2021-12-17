@@ -21,6 +21,7 @@ public:
     bool outputCheck();
 signals:
     void indexHiddenSig(int index);
+    void sendVerSig(int ver);
 
 protected:
     void initType();

@@ -115,7 +115,7 @@
       <string notr="true">color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
-      <string>整机质检工具</string>
+      <string>PDU主控WEB质检软件</string>
      </property>
     </widget>
    </item>

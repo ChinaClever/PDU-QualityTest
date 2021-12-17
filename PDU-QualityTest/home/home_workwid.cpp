@@ -108,13 +108,19 @@ void Home_WorkWid::updateTime()
 
     ui->timeLab->setText(str);
     ui->timeLab->setStyleSheet(style);
-    ui->startBtn->setText(tr("终止设置"));
+    ui->startBtn->setText(tr("终止质检"));
 }
 
 void Home_WorkWid::updateResult()
 {
     QString style;
     QString str = tr("---");
+    if(mItem->modeId && isCheck) {
+        QString str = getTime().at(1);
+        if(!str.toInt() || (mId<40)) mPro->result = Test_Fail;
+    } else if(isCheck) {
+        if(mId < 14) mPro->result = Test_Fail;
+    }
     if (Test_Fail == mPro->result) {
         str = tr("失败");
         style = "background-color:red; color:rgb(255, 255, 255);";
@@ -128,7 +134,7 @@ void Home_WorkWid::updateResult()
     ui->timeLab->setText(str);
     ui->timeLab->setStyleSheet(style);
     ui->groupBox_4->setEnabled(true);
-    ui->startBtn->setText(tr("开始设置"));
+    ui->startBtn->setText(tr("开始质检"));
     ui->cntSpin->setValue(mItem->cnt.cnt);
     if(mItem->cnt.cnt < 1) {
         mItem->user.clear();
@@ -182,8 +188,76 @@ bool Home_WorkWid::initSerial()
     return ret;
 }
 
+bool Home_WorkWid::confirmBox(QString &str)
+{
+    Test_Logs *log = Test_Logs::bulid(this);
+    bool ret = MsgBox::question(this, str);
+    if(ret) str += tr(" 通过"); else {str += tr(" 异常"); mPro->step = Test_Over;}
+    str = str.remove('\n');
+    return log->updatePro(str, ret);
+}
+
+bool Home_WorkWid::checkRtu(QString &str)
+{
+    int ret = 0; SerialPort *com = mItem->com;
+    Test_Logs *log = Test_Logs::bulid(this);
+
+    if( str != tr("IN口检查"))
+        MsgBox::information(this, str);
+    uchar cmd[8] = {0x01,0x03,0x00,0x00,0x00,0x02,0xC4,0x0B};
+    com->reflush(); com->write(cmd, 8);
+    QTime dieTime = QTime::currentTime().addSecs(1);
+    while(QTime::currentTime() < dieTime){
+        QCoreApplication::processEvents(QEventLoop::AllEvents,100);
+        ret = com->reflush(); if(ret) break;
+    }
+    if(ret) str += tr(" 通过"); else {str += tr(" 异常"); mPro->step = Test_Over;}
+    str = str.remove('\n');
+    return log->updatePro(str, ret);
+}
+
+
+bool Home_WorkWid::manualConfirm()
+{
+    mPro->step = Test_Manual;
+    QString str = tr("请确认各接口接线：\n");
+    str += tr("请确认网线是否接入NET口、串口线是否接入IN口，温湿度传感器接在T/H口，声光告警器接在Alarm口");
+    bool ret = confirmBox(str); if(!ret) return false;
+
+    str = tr("PDU外观检查：\n");
+    str += tr("请检查PDU颜色、丝印、插座、电缆线等是否符合要求");
+    ret = confirmBox(str); if(!ret) return false;
+
+    str = tr("显示屏、指示灯、按键：\n");
+    str += tr("请检查显示器、指示灯、按键是否正常");
+    ret = confirmBox(str); if(!ret) return false;
+    if(mPacket->getMpdu()->dt.breaker) {
+        str = tr("断路器检查：\n");
+        str += tr("请手动断开断路器，检查对应的输出位指示灯是否为灭，之后闭合断路器，指示灯为亮");
+        ret = confirmBox(str); if(!ret) return false;
+    }
+
+    str = tr("IN口检查");
+    ret = checkRtu(str); if(!ret) return false;
+
+    str = tr("OUT口检查\n");
+    str += tr("请将接入IN口的串口线换到OUT口");
+    ret = checkRtu(str); if(!ret) return false;
+    if(mPacket->getMpdu()->dt.envbox) {
+        MsgBox::information(this, tr("请接入传感器盒子"));
+    } else {
+        str = tr("SER口检查\n");
+        str += tr("请将接入OUT口的串口线换到SER口");
+        ret = checkRtu(str); if(!ret) return false;
+    }
+
+    return ret;
+}
+
+
 bool Home_WorkWid::initWid()
 {
+    ui->textEdit->clear();
     bool ret = initSerial();
     if(ret) {
         if(mItem->user.isEmpty()) {
@@ -194,26 +268,47 @@ bool Home_WorkWid::initWid()
         }
 
         mPacket->init();
-        emit startSig();
-        ui->textEdit->clear();
-        mPro->step = Test_Start;
-        ui->groupBox_4->setEnabled(false);
+        ret = ui->guideCheck->isChecked();
+        if(ret)ret = manualConfirm(); else ret = true;
+        if(ret) {
+            emit startSig();
+            mPro->step = Test_Start;
+            ui->groupBox_4->setEnabled(false);
+        } else {
+            mPro->step = Test_Over;
+            mPro->result = Test_Fail;
+        }
     }
-
+    if(mPro->step == Test_Start) isCheck = true; else isCheck = false;
     return ret;
 }
 
 void Home_WorkWid::on_startBtn_clicked()
 {
+    bool ret = true;
     if(mPro->step == Test_End) {
-        if(initWid()) mCoreThread->start();
+        if(initWid())mCoreThread->start();
     } else {
-        bool ret = MsgBox::question(this, tr("确定需要提前结束？"));
+        ret = MsgBox::question(this, tr("确定需要提前结束？"));
         if(ret) {
             mPro->result = Test_Fail;
             updateResult();
         }
     }
+}
+
+void Home_WorkWid::recvVerSlot(int ver)
+{
+    if( ver <= 32 )
+        ui->snCheckBox->setChecked(false);
+    else
+    {
+        ui->snCheckBox->setChecked(true);
+        if( ver >= 300 && ver <= 320)
+            ui->snCheckBox->setChecked(false);
+
+    }
+    initTypeComboBox();
 }
 
 void Home_WorkWid::saveFunSlot()
@@ -284,10 +379,19 @@ void Home_WorkWid::initTypeComboBox()
     mSetOpDlg->updateIndex(index);
     ui->typeComboBox->setCurrentIndex(index);
     emit typeSig(index);
+    sDevData* ptr = mPacket->getMpdu();
+    ui->guideCheck->setChecked(ptr->dt.popup);
 }
 
 void Home_WorkWid::on_snCheckBox_clicked(bool checked)
 {
     mItem->enSn = checked;
     if(!checked) MsgBox::information(this, tr("注意：创建序列号有利于产品溯源。你已选择不创建序列号。"));
+}
+
+void Home_WorkWid::on_guideCheck_clicked(bool checked)
+{
+    sDevData* ptr = mPacket->getMpdu();
+    ptr->dt.popup = checked?1:0;
+    emit savePopupSig(checked);
 }
