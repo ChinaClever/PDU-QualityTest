@@ -100,7 +100,7 @@ struct sDevType
     uchar boards;
     uchar level;
     uchar mpdu_ver;
-    uchar board[3];
+    uchar board[6];
     uchar loop[6];
     uchar ip_lcd;
     uchar security;

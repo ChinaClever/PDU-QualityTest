@@ -43,6 +43,7 @@ void Dev_Mpdu::initType()
 
     for(int i=0; i<6; ++i) ptr->loop[i] = read(QString("loop_%1").arg(i+1), 8).toInt();
     for(int i=0; i<3; ++i) ptr->board[i] = read(QString("board_%1").arg(i+1), 8).toInt();
+    for(int i=3; i<6; ++i) ptr->board[i] = read(QString("board_%1").arg(i+1), 0).toInt();
 }
 
 void Dev_Mpdu::writeType()
@@ -65,7 +66,7 @@ void Dev_Mpdu::writeType()
     write("popup", ptr->popup);
 
     for(int i=0; i<6; ++i) write(QString("loop_%1").arg(i+1), ptr->loop[i]);
-    for(int i=0; i<3; ++i) write(QString("board_%1").arg(i+1), ptr->board[i]);
+    for(int i=0; i<6; ++i) write(QString("board_%1").arg(i+1), ptr->board[i]);
 }
 
 void Dev_Mpdu::initData()

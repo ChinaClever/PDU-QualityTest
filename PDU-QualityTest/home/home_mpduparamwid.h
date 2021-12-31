@@ -48,7 +48,7 @@ private:
     sDevData *mDev;
 
     QSpinBox *mLoops[6];
-    QSpinBox *mBoards[3];
+    QSpinBox *mBoards[6];
 };
 
 #endif // HOME_MPDUPARAMWID_H

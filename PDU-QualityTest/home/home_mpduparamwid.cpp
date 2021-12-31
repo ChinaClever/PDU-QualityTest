@@ -38,6 +38,9 @@ void Home_MpduParamWid::initWid()
     mBoards[i++] = ui->opSpin_1;
     mBoards[i++] = ui->opSpin_2;
     mBoards[i++] = ui->opSpin_3;
+    mBoards[i++] = ui->opSpin_4;
+    mBoards[i++] = ui->opSpin_5;
+    mBoards[i++] = ui->opSpin_6;
 }
 
 void Home_MpduParamWid::initType()
@@ -64,7 +67,12 @@ void Home_MpduParamWid::initType()
     on_verBox_currentIndexChanged(dt->mpdu_ver);
     emit indexHiddenSig(dt->mpdu_ver);
     for(int i=0; i<6; ++i) mLoops[i]->setValue(dt->loop[i]);
-    for(int i=0; i<3; ++i) mBoards[i]->setValue(dt->board[i]);
+    for(int i=0; i<dt->boards; ++i) mBoards[i]->setValue(dt->board[i]);
+    bool en = true;
+    for(int i=dt->boards; i<6; ++i){
+      mBoards[i]->setValue(0);
+      mBoards[i]->setHidden(en);
+    }
 }
 
 
@@ -92,7 +100,7 @@ void Home_MpduParamWid::updateType()
     dt->security = ui->safeRadio->isChecked()?1:0;
 
     for(int i=0; i<6; ++i) dt->loop[i] = mLoops[i]->value();
-    for(int i=0; i<3; ++i) dt->board[i] = mBoards[i]->value();
+    for(int i=0; i<6; ++i) dt->board[i] = mBoards[i]->value();
 
     if( dt->mpdu_ver == 2 && !dt->versions.contains(".") )
         emit sendVerSig(dt->versions.toInt());
@@ -162,7 +170,7 @@ void Home_MpduParamWid::on_boardSpin_valueChanged(int arg1)
     bool en = true;
     if(arg1 == 0) arg1 = 1;
     int v = ui->outputSpin->value() / arg1;
-    for(int i=0; i<3; ++i) {
+    for(int i=0; i<6; ++i) {
         if(i < arg1) {
             en = false;
             mBoards[i]->setValue(v);
@@ -196,7 +204,7 @@ bool Home_MpduParamWid::outputCheck()
     int res = 0;
     bool ret = true;
     int v = ui->outputSpin->value();
-    for(int i=0; i<3; ++i) {
+    for(int i=0; i<6; ++i) {
         res += mBoards[i]->value();
     }
     if(v != res) ret = false;
