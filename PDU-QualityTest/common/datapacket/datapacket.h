@@ -6,6 +6,7 @@
 #define LINE_NUM  3
 #define PACK_ARRAY_SIZE LINE_NUM
 #define OpSize  6
+#define ZpduOpSize 48
 
 
 /**
@@ -72,7 +73,9 @@ struct sObjCfg
     sUnitCfg vol; // 电压
     sUnitCfg cur; // 电流
     sUnitCfg output; // 电流
+    sUnitCfg loopcur; // 回路电流
     sUnitCfg opCur[OpSize]; // 输出位电流
+    sUnitCfg zpduopCur[ZpduOpSize]; // 输出位电流
 
     sUnitCfg tem; // 温度
     sUnitCfg hum; // 湿度
@@ -87,26 +90,41 @@ struct sDevType
 
     uchar ac;
     uchar series; // 1 A系列  2 B系列  3 C系列  4 D系列1
-    uchar lines;
+
     uchar loops;
-    uchar outputs;
-    uchar breaker;
-    uchar language;
+
     uchar modbus;
-    uchar standar;
-    uchar version;
+
     uchar log_en;
     uchar envbox;
     uchar boards;
-    uchar level;
+    uchar ip_lcd;
     uchar mpdu_ver;
+    uchar zpdu_ver;
     uchar board[6];
     uchar loop[6];
-    uchar ip_lcd;
     uchar security;
     uchar popup;
-
     QString versions;
+
+    uchar outputs;
+    uchar version;
+    uchar language;
+    uchar lines;// 1 单相     2 单相两路/双火线  3 三相
+    uchar breaker;//0 16A, 1 20A
+    uchar level;//垂直、水平
+    uchar standar;//标准、中性
+    uchar line_op[3];
+    uchar loop_op[6];
+    uchar loop_smallloop[6];
+    uchar devZpduType;//1-20
+
+    uchar rated_voltage;//0:220 , 1:380
+    uchar rated_current;//0:16 , 1:32 , 2:63
+    QString rated_frequency;//50
+    QString type;//型号:ZZIF-130-2004
+    QString hw_version;//A
+    QString protocol_version;//196608
 };
 
 
@@ -160,12 +178,14 @@ public:
 
     void init();
     sDevData *getMpdu() {return mpdu;}
+    sDevData *getZpdu() {return zpdu;}
     sProgress *getPro() {return pro;}
 
     bool updatePro(const QString &str, bool pass=true, int sec=1);
     bool delay(int s=1);
 private:
     sDevData *mpdu;
+    sDevData *zpdu;
     sProgress *pro;
 };
 

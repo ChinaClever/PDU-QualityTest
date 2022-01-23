@@ -352,7 +352,7 @@ void Home_WorkWid::on_outputBtn_clicked()
     mSetOpDlg->exec();
 }
 
-void Home_WorkWid::on_typeComboBox_currentIndexChanged(int index)
+void Home_WorkWid::on_typeComboBox_currentIndexChanged(int index)//切换PDU类型，改变界面内容
 {
     mItem->modeId = index;
     initTypeComboBox();
@@ -364,10 +364,12 @@ void Home_WorkWid::initTypeComboBox()
     bool en = false;
     int index = mItem->modeId;
     mItem->enSn = ui->snCheckBox->isChecked();
+    sDevData* ptr = mPacket->getMpdu();
     if(index > MPDU) {
         en = true;
         mItem->enSn = false;
         ui->outputBtn->setHidden(en);
+        ptr = mPacket->getZpdu();
     } else if(index == MPDU) {
         ui->outputBtn->setHidden(false);
     } else {
@@ -379,7 +381,7 @@ void Home_WorkWid::initTypeComboBox()
     mSetOpDlg->updateIndex(index);
     ui->typeComboBox->setCurrentIndex(index);
     emit typeSig(index);
-    sDevData* ptr = mPacket->getMpdu();
+
     ui->guideCheck->setChecked(ptr->dt.popup);
 }
 

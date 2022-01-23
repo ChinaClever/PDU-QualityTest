@@ -26,6 +26,7 @@ private:
     Ui::Home_MainWid *ui;
     Home_WorkWid *mWorkWid;
     Home_MpduWid *mMpduWid;
+    Home_ZpduWid *mZpduWid;
 };
 
 #endif // HOME_MAINWID_H

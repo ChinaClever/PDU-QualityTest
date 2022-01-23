@@ -11,7 +11,11 @@ HEADERS += \
     $$PWD/home_opunitwid.h \
     $$PWD/home_outputwid.h \
     $$PWD/home_setopdlg.h \
-    $$PWD/home_workwid.h
+    $$PWD/home_workwid.h \
+    $$PWD/home_zpdualarmwid.h \
+    $$PWD/home_zpdudebugwid.h \
+    $$PWD/home_zpdusetwid.h \
+    $$PWD/home_zpduwid.h
 
 	
 SOURCES += \
@@ -23,8 +27,11 @@ SOURCES += \
     $$PWD/home_opunitwid.cpp \
     $$PWD/home_outputwid.cpp \
     $$PWD/home_setopdlg.cpp \
-    $$PWD/home_workwid.cpp
-
+    $$PWD/home_workwid.cpp \
+    $$PWD/home_zpdualarmwid.cpp \
+    $$PWD/home_zpdudebugwid.cpp \
+    $$PWD/home_zpdusetwid.cpp \
+    $$PWD/home_zpduwid.cpp
 
 FORMS += \
     $$PWD/home_lineunitwid.ui \
@@ -35,7 +42,11 @@ FORMS += \
     $$PWD/home_opunitwid.ui \
     $$PWD/home_outputwid.ui \
     $$PWD/home_setopdlg.ui \
-    $$PWD/home_workwid.ui
+    $$PWD/home_workwid.ui \
+    $$PWD/home_zpdualarmwid.ui \
+    $$PWD/home_zpdudebugwid.ui \
+    $$PWD/home_zpdusetwid.ui \
+    $$PWD/home_zpduwid.ui
 
 
 

@@ -9,6 +9,7 @@
 sDataPacket::sDataPacket()
 {
     mpdu = new sDevData;
+    zpdu = new sDevData;
     pro = new sProgress();
 }
 

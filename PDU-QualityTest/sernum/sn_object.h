@@ -2,6 +2,7 @@
 #define SN_OBJECT_H
 
 #include "dev_mpdu.h"
+#include "dev_zpdu.h"
 
 class Sn_Object : public QThread
 {

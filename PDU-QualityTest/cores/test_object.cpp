@@ -27,6 +27,7 @@ void Test_Object::updateDev()
 {
     switch (mItem->modeId) {
     case MPDU: mObj = Dev_Mpdu::bulid(this); break;
+    case ZPDU: mObj = Dev_Zpdu::bulid(this); break;
     }
 
     if(mObj != NULL) {

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "home_mpduwid.h"
+#include "home_zpduwid.h"
 #include "test_corethread.h"
 
 namespace Ui {

@@ -5,6 +5,7 @@
  */
 #include "home_mpduwid.h"
 #include "ui_home_mpduwid.h"
+#include "devices/dev_zpdu.h"
 
 Home_MpduWid::Home_MpduWid(QWidget *parent) :
     QWidget(parent),

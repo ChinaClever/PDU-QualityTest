@@ -21,6 +21,7 @@ void Sn_Object::initDev()
 {
     switch (mItem->modeId) {
     case MPDU: mDev = mPacket->getMpdu(); break;
+    case ZPDU: mDev = mPacket->getZpdu(); break;
     }
 
     if(mDev) mDt = &(mDev->dt);
