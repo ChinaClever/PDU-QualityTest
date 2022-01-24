@@ -111,7 +111,7 @@ void Dev_Zpdu::initData()
     sObjCfg *ptr = &(mDev->cfg);
     initUnitV("vol", ptr->vol);
     initUnitC("cur", ptr->cur);
-    initUnitC("loopcur", ptr->cur);
+    initUnitC("loopcur", ptr->loopcur);
 
     initUnitT("tem", ptr->tem);
     initUnitH("hum", ptr->hum);
