@@ -34,7 +34,7 @@ void Dev_Zpdu::initDebugHtml()
 {
     sDevType *ptr = mDt;ptr->standar = read("standar", 0).toInt();
     ptr->outputs = read("outputs", 24).toInt();
-    ptr->language = read("language", 1).toInt();
+    ptr->language = read("language", 0).toInt();
     ptr->level = read("level", 0).toInt();
     ptr->zpdu_ver = read("zpdu_ver", 1).toInt();
     ptr->popup = read("popup" , 0).toInt();
@@ -111,7 +111,7 @@ void Dev_Zpdu::initData()
     sObjCfg *ptr = &(mDev->cfg);
     initUnitV("vol", ptr->vol);
     initUnitC("cur", ptr->cur);
-    initUnitC("loopcur", ptr->cur);
+    initUnitC("loopcur", ptr->loopcur);
 
     initUnitT("tem", ptr->tem);
     initUnitH("hum", ptr->hum);
