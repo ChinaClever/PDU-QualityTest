@@ -82,12 +82,12 @@ bool Home_ZpduDebugWid::loopCheck()
     int res = 0;
     bool ret = true;
     int v = ui->OpEdit->text().toInt();
-    res += ui->C1LoopEdit->text().toInt();
-    res += ui->C2LoopEdit->text().toInt();
-    res += ui->C3LoopEdit->text().toInt();
-    res += ui->C4LoopEdit->text().toInt();
-    res += ui->C5LoopEdit->text().toInt();
-    res += ui->C6LoopEdit->text().toInt();
+    res += ui->C1OpEdit->text().toInt();
+    res += ui->C2OpEdit->text().toInt();
+    res += ui->C3OpEdit->text().toInt();
+    res += ui->C4OpEdit->text().toInt();
+    res += ui->C5OpEdit->text().toInt();
+    res += ui->C6OpEdit->text().toInt();
     if(v != res) ret = false;
     return ret;
 }
