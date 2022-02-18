@@ -38,7 +38,7 @@ void Dev_Zpdu::initDebugHtml()
     ptr->level = read("level", 0).toInt();
     ptr->zpdu_ver = read("zpdu_ver", 1).toInt();
     ptr->popup = read("popup" , 0).toInt();
-    ptr->devZpduType = read("devZpduType" , 16).toInt();
+    ptr->devZpduType = read("devzpdutype" , 15).toInt();
 
     for(int i=0; i<3; ++i) ptr->line_op[i] = read(QString("line_op%1").arg(i+1), 8).toInt();
     for(int i=0; i<6; ++i) ptr->loop_op[i] = read(QString("loop_op%1").arg(i+1), 4).toInt();
@@ -66,7 +66,7 @@ void Dev_Zpdu::writeDebugHtml()
     write("language", ptr->language);
     write("level", ptr->level);
     write("zpdu_ver", ptr->zpdu_ver);
-    write("devZpduType", ptr->devZpduType);
+    write("devzpdutype", ptr->devZpduType);
     write("popup", ptr->popup);
 
     for(int i=0; i<3; ++i) write(QString("line_op%1").arg(i+1), ptr->line_op[i]);
@@ -117,7 +117,7 @@ void Dev_Zpdu::initData()
     initUnitH("hum", ptr->hum);
     for(int i = 0 ; i < ZpduOpSize ; i++)
     {
-        QString str = "zpduopCur_" + QString::number(i+1);
+        QString str = "zpduopcur_" + QString::number(i+1);
         initUnitC(str, ptr->zpduopCur[i]);
     }
 }
@@ -127,12 +127,13 @@ void Dev_Zpdu::writeData()
     sObjCfg *ptr = &(mDev->cfg);
     writeUnit("vol", ptr->vol, 1);
     writeUnit("cur", ptr->cur, 1);
+    writeUnit("loopcur", ptr->loopcur, 1);
 
     writeUnit("tem", ptr->tem, 1);
     writeUnit("hum", ptr->hum, 1);
 
     for(int i=0; i<ZpduOpSize; ++i) {
-        QString str = "zpduopCur_" + QString::number(i+1);
+        QString str = "zpduopcur_" + QString::number(i+1);
         writeUnit(str, ptr->zpduopCur[i], 1);
     }
 }
