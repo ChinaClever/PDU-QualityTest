@@ -89,7 +89,7 @@ void Home_ZpduSetWid::initData()
     ui->ratedVolBox->setCurrentIndex(obj->rated_voltage);
     ui->ratedCurBox->setCurrentIndex(obj->rated_current);
     ui->ratedFreqEdit->setText(obj->rated_frequency);
-    ui->lineBox->setCurrentIndex(obj->lines);
+    ui->lineBox->setCurrentIndex(obj->lines-1);
     ui->breakerBox->setCurrentIndex(obj->breaker);
 
     for(int i = 0 ; i < ZpduOpSize ; i++)
@@ -108,7 +108,7 @@ void Home_ZpduSetWid::updateData()
     obj->rated_voltage = ui->ratedVolBox->currentIndex();
     obj->rated_current = ui->ratedCurBox->currentIndex();
     obj->rated_frequency = ui->ratedFreqEdit->text();
-    obj->lines = ui->lineBox->currentIndex();
+    obj->lines = ui->lineBox->currentIndex()+1;
     obj->breaker = ui->breakerBox->currentIndex();
 
     for(int i = 0 ; i < ZpduOpSize ; i++)

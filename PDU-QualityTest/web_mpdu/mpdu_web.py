@@ -29,7 +29,7 @@ class MpduWeb:
 
     def initCfg(self):
         
-        self.cfgs = {'versions':'','user': 'admin', 'pwd': 'admin','ip_addr': '192.168.1.163', 'debug_web':  'correct.html','lines':1,'loops':1,'outputs':24,'standar':0,'series':4,'language':1,'breaker':1,'modbus':1,'vol_min':80,'vol_max':276,'cur_min':0,'cur_crmin':0,'cur_crmax':32,'cur_max':32,'tem_min':0,'tem_max':40,'hum_min':0,'hum_max':99,'output_min':0,'output_crmin':0,'output_crmax':16,'output_max':16,'op_1_min':0,'op_1_max':10,'op_1_en':0,'op_1_id':0,'op_1_crmin':0,'op_1_crmax':10,'op_2_min':0,'op_2_max':10,'op_2_en':0,'op_2_id':0,'op_2_crmin':0,'op_2_crmax':10,'op_3_min':0,'op_3_max':10,'op_3_en':0,'op_3_id':0,'op_3_crmin':0,'op_3_crmax':10,'op_4_min':0,'op_4_max':10,'op_4_en':0,'op_4_id':0,'op_4_crmin':0,'op_4_crmax':10,'op_5_min':0,'op_5_max':10,'op_5_en':0,'op_5_id':0,'op_5_crmin':0,'op_5_crmax':10,'op_6_min':0,'op_6_max':10,'op_6_en':0,'op_6_id':0,'op_6_crmin':0,'op_6_crmax':10,'mpdu_ver':0,'boards':3,'level':0,'envbox':0,'loop_1':8,'loop_2':8,'loop_3':8,'loop_4':8,'loop_5':8,'loop_6':8,'mpdu_ver':0, 'security':0}
+        self.cfgs = {'versions':'','user': 'admin', 'pwd': 'admin','ip_addr': '192.168.1.163', 'debug_web':  'correct.html','lines':1,'loops':1,'outputs':24,'standar':0,'series':4,'language':1,'breaker':1,'modbus':1,'vol_min':80,'vol_max':276,'cur_min':0,'cur_crmin':0,'cur_crmax':32,'cur_max':32,'tem_min':0,'tem_max':40,'hum_min':0,'hum_max':99,'output_min':0,'output_crmin':0,'output_crmax':16,'output_max':16,'op_1_min':0,'op_1_max':10,'op_1_en':0,'op_1_id':0,'op_1_crmin':0,'op_1_crmax':10,'op_2_min':0,'op_2_max':10,'op_2_en':0,'op_2_id':0,'op_2_crmin':0,'op_2_crmax':10,'op_3_min':0,'op_3_max':10,'op_3_en':0,'op_3_id':0,'op_3_crmin':0,'op_3_crmax':10,'op_4_min':0,'op_4_max':10,'op_4_en':0,'op_4_id':0,'op_4_crmin':0,'op_4_crmax':10,'op_5_min':0,'op_5_max':10,'op_5_en':0,'op_5_id':0,'op_5_crmin':0,'op_5_crmax':10,'op_6_min':0,'op_6_max':10,'op_6_en':0,'op_6_id':0,'op_6_crmin':0,'op_6_crmax':10,'mpdu_ver':0,'boards':3,'level':0,'envbox':0,'loop_1':8,'loop_2':8,'loop_3':8,'loop_4':8,'loop_5':8,'loop_6':8, 'security':0,'popup':1,'ratedVol':230}
         items = MpduWeb.getCfg().items("mCfg")  # 获取section名为Mysql-Database所对应的全部键值对
         #self.cfgs['mac'] = MpduWeb.getCfg().get("Mac", "mac")
         for it in items:
@@ -118,16 +118,18 @@ class MpduWeb:
     
     def resetFactory(self):
         jsSheet = "var xmlset = createXmlRequest();xmlset.onreadystatechange = setdata;ajaxget(xmlset, \"/setsys?a=\" + 1 + \"&\");"
+        if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['versions']) == 16 ):
+                jsSheet = 'var setUrl = Encryption(\"/setsys\");var xmlset = createXmlRequest();xmlset.onreadystatechange = setdata;ajaxget(xmlset, setUrl +\"?a=\" + 1 + \"&\");'
         self.divClick(7)
         if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['security']) == 1 ):
             time.sleep(2)
-        time.sleep(0.35)
+        time.sleep(1.35)
         self.driver.find_element_by_id('biao1').click()
-        time.sleep(0.35)
+        time.sleep(3.35)
         if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['security']) == 1 ):
-            time.sleep(1)
-        self.setSelect('order',1)
-        self.execJs(jsSheet)
+            time.sleep(2)
+        self.setSelect('order',1);time.sleep(3)
+        self.execJs(jsSheet); time.sleep(3)
         self.sendtoMainapp('设备Web出厂设置成功;1')
         
     def check(self, ssid , value , parameter):
@@ -139,7 +141,6 @@ class MpduWeb:
             sock.sendto(message.encode('utf-8-sig') , (dest_ip , dest_port))
             return 2,message
         v = self.driver.find_element_by_id(ssid).get_attribute('value')
-        #print(type(v))
         ret = 1
         if( value != self.driver.find_element_by_id(ssid).get_attribute('value') ):
             message = '检查{0}失败，实际值{1}，期待值{2};'.format(parameter,v,value)+str(0)
@@ -274,12 +275,17 @@ class MpduWeb:
                 print('exception')
             finally:
                 time.sleep(5)
-                tt = self.driver.find_element_by_xpath('//table[2]/tbody/tr[2]/td[2]')
+                tt = self.driver.find_element_by_xpath('//table[2]/tbody/tr[2]/td[2]')#1.5.7//table[2]/tbody/tr[2]/td[2]
+                #1.5.8//table[2]/tbody/tr[1]/td[2]
+                if( cfg['versions'] == '1.5.8' ):
+                    tt = self.driver.find_element_by_xpath('//table[2]/tbody/tr[1]/td[2]')
                 #print(tt.text)
                 if( cfg['versions'] == ''):
                     return 2,'软件版本空;2'
                     
                 if( cfg['versions'] in tt.text and len(str(cfg['versions'])) >= 2 ):
+                    if( '.' in cfg['versions']):
+                        cfg['versions'] = '55'
                     return 1,'软件版本正确;1'
                 else:
                     return 0,'软件版本错误;0'
@@ -306,60 +312,87 @@ class MpduWeb:
         return ret,message
 
     def setAlarmTcur(self):
-        if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['security']) == 1 ):
-            time.sleep(4)
+        time.sleep(4)
        
         self.setItById('Tcmin1' , '1' ,'总电流最小值')
         self.setItById('Txcmin1' , '1' ,'总电流下限值')
         time.sleep(2)
         self.driver.find_element_by_id("save4").click()
-        time.sleep(2)
-        try:
-            jsSheet = 'if(confirm("请检查ALM指示灯是否亮起、蜂鸣器是否蜂鸣、声光告警器是否亮起")){alert("是");}else{alert("否");}'
-            self.execJs(jsSheet)
-            #print(alert)
-            while( True ):
-                alert = self.driver.switch_to_alert().text
-                if( alert == '请检查ALM指示灯是否亮起、蜂鸣器是否蜂鸣、声光告警器是否亮起' ):
-                    time.sleep(1)
-                elif( alert == '是' ):
-                    self.sendtoMainapp('ALM指示灯已亮起、蜂鸣器已蜂鸣、声光告警器已亮起;1')
-                    break
-                elif( alert == '否' ):
-                    self.sendtoMainapp('ALM指示灯未亮起、蜂鸣器未蜂鸣、声光告警器未亮起;0')
-                    break
-            
-            self.driver.switch_to.alert.accept()
-        except :
-            print("exception")
+        time.sleep(15)
+        if( int(self.cfgs['popup']) == 1):
+            try:
+                #jsSheet = 'if(confirm("请检查ALM指示灯是否亮起、蜂鸣器是否蜂鸣、声光告警器是否亮起")){alert("是");}else{alert("否");}'
+                #self.execJs(jsSheet)
+                #print(alert)
+                time.sleep(3)
+                #while( True ):
+                    #alert = self.driver.switch_to_alert().text
+                #    if( alert == '请检查ALM指示灯是否亮起、蜂鸣器是否蜂鸣、声光告警器是否亮起' ):
+                #        time.sleep(2)
+                #    elif( alert == '是' ):
+                #        self.sendtoMainapp('ALM指示灯已亮起、蜂鸣器已蜂鸣、声光告警器已亮起;1')
+                #        break
+                #    elif( alert == '否' ):
+                #        self.sendtoMainapp('ALM指示灯未亮起、蜂鸣器未蜂鸣、声光告警器未亮起;0')
+                #        break
+                #    time.sleep(1)
+                
+                #self.driver.switch_to.alert.accept()
+            except :
+                print("exception")
             
         
     def setNormalTcur(self):
-        if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['security']) == 1 ):
-            time.sleep(4)
+        time.sleep(4)
         
         self.setItById('Tcmin1' , '0' ,'总电流最小值')
         self.setItById('Txcmin1' , '0' ,'总电流下限值')
         time.sleep(2)
         self.driver.find_element_by_id("save4").click()
         time.sleep(2)
-        try:
-            jsSheet = 'if(confirm("请检查ALM指示灯是否灭、蜂鸣器是否蜂鸣停止、声光告警器是否灭")){alert("是");}else{alert("否");}'
-            self.execJs(jsSheet)
-            while( True ):
-                alert = self.driver.switch_to_alert().text
-                if( alert == '请检查ALM指示灯是否灭、蜂鸣器是否蜂鸣停止、声光告警器是否灭' ):
-                    time.sleep(1)
-                elif( alert == '是' ):
-                    self.sendtoMainapp('ALM指示灯已灭、蜂鸣器已蜂鸣停止、声光告警器已灭;1')
-                    break
-                elif( alert == '否' ):
-                    self.sendtoMainapp('ALM指示灯未灭、蜂鸣器未蜂鸣停止、声光告警器未灭;0')
-                    break
-            
-            self.driver.switch_to.alert.accept()
-        except :
-            print("exception")
+        if( int(self.cfgs['popup']) == 1):
+            try:
+                #jsSheet = 'if(confirm("请检查ALM指示灯是否灭、蜂鸣器是否蜂鸣停止、声光告警器是否灭")){alert("是");}else{alert("否");}'
+                #self.execJs(jsSheet)
+                time.sleep(3)
+                #while( True ):
+                #    alert = self.driver.switch_to_alert().text
+                #    if( alert == '请检查ALM指示灯是否灭、蜂鸣器是否蜂鸣停止、声光告警器是否灭' ):
+                #        time.sleep(2)
+                #    elif( alert == '是' ):
+                #        self.sendtoMainapp('ALM指示灯已灭、蜂鸣器已蜂鸣停止、声光告警器已灭;1')
+                #        break
+                #    elif( alert == '否' ):
+                #        self.sendtoMainapp('ALM指示灯未灭、蜂鸣器未蜂鸣停止、声光告警器未灭;0')
+                #        break
+                #    time.sleep(1)
+                
+                #self.driver.switch_to.alert.accept()
+            except :
+                print("exception")
 
-
+    def checkCalibrationLog(self):
+        cfg = self.cfgs
+        self.divClick(6)
+        time.sleep(1)
+        if( int(self.cfgs['security']) == 1 ):
+            time.sleep(3)
+        self.driver.find_element_by_id('biao2').click()
+        time.sleep(3)
+        tt = self.driver.find_element_by_id('evenlognum').text
+        ss , page = tt.split(':')
+        table = self.driver.find_element_by_id('tbalarmlog')
+        trs = table.find_elements_by_tag_name('tr')
+        v = int(cfg['mpdu_ver'])
+        for tr in trs:
+            tds = tr.find_elements_by_tag_name('td')
+            for td in tds:
+                if( v == 0 ):
+                    if( '校准' in td.text or 'calibration' in td.text ):
+                        message = '日志中存在自动校准记录;0'
+                        self.sendtoMainapp(message)
+                else:
+                    if( '校准' in td.text or 'Local Time Correct' in td.text ):
+                        message = '日志中存在自动校准记录;0'
+                        self.sendtoMainapp(message)
 
