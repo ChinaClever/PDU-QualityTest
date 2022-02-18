@@ -21,7 +21,8 @@ class Mpdu2(MpduWeb):
         self.sendtoMainapp(message)
         if(intRet == 0):
             return
-            
+        #self.checkCalibrationLog()
+        #self.checkTime()
         opLists = self.opThreshold()
         opLists.sort()
         
@@ -33,7 +34,8 @@ class Mpdu2(MpduWeb):
             self.checkTitleBar3(opLists)
         if( int(cfg['series']) == 3 or int(cfg['series']) == 4 ):
             self.openOrOffTitleBar5( False )
-            self.confirmTips( False )
+            #if(int(cfg['popup']) == 1):
+            #    self.confirmTips( False )
             self.checkTitleBar5( False )
             self.openOrOffTitleBar5( True )
             #self.confirmTips( True )
@@ -42,7 +44,6 @@ class Mpdu2(MpduWeb):
         
         self.setModbusMode()
         self.checkModbusMode()
-        
         self.checkTime()
         self.clearLogs()
         self.resetFactory()
@@ -55,6 +56,8 @@ class Mpdu2(MpduWeb):
         self.driver.find_element_by_id("biao1").click()
         time.sleep(0.35)
         jsSheet = 'var j = document.getElementById(\"line-dev\").value;var a = document.getElementById(\"device\").value;var encodeName = encodeURI(encodeURI(a));var c = 0;var e = document.getElementById(\"beep\").value;var g = document.getElementById(\"slave\").value;var h = document.getElementById(\"baud\").value;var sBox = document.getElementById(\"sersonBox\").value;xmlset = createXmlRequest();xmlset.onreadystatechange = setdata_a;ajaxget(xmlset, \"/setdevice?a=\" + encodeName + \"&b=\" + c + \"&c=\" + e + \"&d=\" + g + \"&e=\" + h + \"&f=\" + j + \"&g=\" + sBox + \"&h=\" + {0} + \"&\")'
+        if( int(self.cfgs['mpdu_ver']) == 2 and int(self.cfgs['versions']) == 16 ):
+            jsSheet = 'var j = document.getElementById(\"line-dev\").value;var a = document.getElementById(\"device\").value;var encodeName = encodeURI(encodeURI(a));var c = 0;var e = document.getElementById(\"beep\").value;var g = document.getElementById(\"slave\").value;var h = document.getElementById(\"baud\").value;var sBox = document.getElementById(\"sersonBox\").value;xmlset = createXmlRequest();xmlset.onreadystatechange = setdata_a;var setUrl = Encryption(\"/setdevice\");ajaxget(xmlset, setUrl + \"?a=\" + encodeName + \"&b=\" + c + \"&c=\" + e + \"&d=\" + g + \"&e=\" + h + \"&f=\" + j + \"&g=\" + sBox + \"&h=\" + {0} + \"&\")'
         self.execJs(jsSheet.format(int(self.cfgs['modbus'])))
         time.sleep(0.35)
         
@@ -81,9 +84,19 @@ class Mpdu2(MpduWeb):
             time.sleep(3)
         for num in range(0, 2):
             self.execJs(jsSheet.format(num))
-            time.sleep(0.35)
+            
+            n1 = datetime.datetime.now()
+            t1 = n1.strftime('%Y-%m-%d %H:%M:%S %p')+';1'
+            self.sendtoMainapp(t1)
+            
+            if(num==0):time.sleep(20)
+            else:time.sleep(6)
+            n2 = datetime.datetime.now()
+            t2 = n2.strftime('%Y-%m-%d %H:%M:%S %p')+';1'
+            self.sendtoMainapp(t2)
+            
             self.driver.find_element_by_id('biao{0}'.format(num+1)).click()
-            time.sleep(2)
+            time.sleep(3)
             tt = self.driver.find_element_by_id('evenlognum').text
             if( tt != 'Total : 0'):
                 self.sendtoMainapp(ListMessage[num])
@@ -119,6 +132,7 @@ class Mpdu2(MpduWeb):
         else:
             time.sleep(0.35)
             self.driver.switch_to.default_content()
+            time.sleep(1)
         
 
     def setCorrect2(self):
@@ -142,6 +156,12 @@ class Mpdu2(MpduWeb):
         status , message = self.check( 'line9' , cfg['board_2'] , '第2块执行板输出位数')
         self.sendtoMainapp(message)
         status , message = self.check( 'line10' , cfg['board_3'] , '第3块执行板输出位数')
+        self.sendtoMainapp(message)
+        status , message = self.check( 'line11' , cfg['board_4'] , '第4块执行板输出位数')
+        self.sendtoMainapp(message)
+        status , message = self.check( 'line12' , cfg['board_5'] , '第5块执行板输出位数')
+        self.sendtoMainapp(message)
+        status , message = self.check( 'line13' , cfg['board_6'] , '第6块执行板输出位数')
         self.sendtoMainapp(message)
         
         status , message = self.check( 'line4' , cfg['loops'] , '回路数')
@@ -185,6 +205,9 @@ class Mpdu2(MpduWeb):
         status , message = self.check( 'type' , cfg['series'] , '系列')
         self.sendtoMainapp(message)
         
+        status , message = self.check( 'RatedVol' , str(cfg['ratedVol']) , '额定电压')
+        self.sendtoMainapp(message)
+        
         status , message = self.check( 'language' , cfg['language'] , '中英文')
         self.sendtoMainapp(message)
         
@@ -195,12 +218,13 @@ class Mpdu2(MpduWeb):
         
     def checkTitleBar2(self):
         cfg = self.cfgs
+        time.sleep(0.5)
         self.divClick(2)
         if( int(self.cfgs['security']) == 1 ):
             time.sleep(1)
-        time.sleep(0.35)
+        time.sleep(0.85)
         self.driver.find_element_by_id("titlebar2").click()
-        time.sleep(0.35)
+        time.sleep(0.85)
         
         self.setAlarmTcur()
         self.setNormalTcur()
@@ -574,13 +598,14 @@ class Mpdu2(MpduWeb):
                 while( True ):
                     alert = self.driver.switch_to_alert().text
                     if( alert == '输出位指示灯是否顺序打开' ):
-                        time.sleep(1)
+                        time.sleep(2)
                     elif( alert == '确认顺序打开' ):
                         self.sendtoMainapp('输出位指示灯确认顺序打开;1')
                         break
                     elif( alert == '不是顺序打开' ):
                         self.sendtoMainapp('输出位指示灯不是顺序打开;0')
                         break
+                    time.sleep(1)
                 
             else:
                 jsSheet = 'if(confirm("输出位指示灯是否顺序关闭")){alert("确认顺序关闭");}else{alert("不是顺序关闭");}'
@@ -588,13 +613,14 @@ class Mpdu2(MpduWeb):
                 while( True ):
                     alert = self.driver.switch_to_alert().text
                     if( alert == '输出位指示灯是否顺序关闭' ):
-                        time.sleep(1)
+                        time.sleep(2)
                     elif( alert == '确认顺序关闭' ):
                         self.sendtoMainapp('输出位指示灯确认顺序关闭;1')
                         break
                     elif( alert == '不是顺序关闭' ):
                         self.sendtoMainapp('输出位指示灯不是顺序关闭;0')
                         break
+                    time.sleep(1)
             self.driver.switch_to.alert.accept()
         except  :
             print('exception')
@@ -612,10 +638,12 @@ class Mpdu2(MpduWeb):
         time.sleep(0.35)
         if( onFlag == True ):
             self.driver.find_element_by_id('seton43').click()
-            time.sleep(int(self.cfgs['outputs'])-6)
+            time.sleep(int(self.cfgs['outputs'])+5)
         else:
             self.driver.find_element_by_id('setoff43').click()
-    
+            if( int(self.cfgs['popup']) == 0):
+                time.sleep(int(self.cfgs['outputs'])+5)
+            
     def checkTitleBar5(self , onFlag):
         cfg = self.cfgs
         #self.divClick(2)
@@ -797,10 +825,14 @@ class Mpdu2(MpduWeb):
             t2 = int(h2)*3600 + int(m2)*60 + int(s2)
             if( abs( t1-t2 ) >= 10*60 ):
                 self.sendtoMainapp("检查时间时分秒失败;0" )
+                self.sendtoMainapp("%d;1"%t1 )
+                self.sendtoMainapp("%d;1"%t2 )
                 return False
             else:
                 #print(abs(t1-t2))
                 self.sendtoMainapp("检查时间成功;1" )
+                self.sendtoMainapp("%d;1"%t1 )
+                self.sendtoMainapp("%d;1"%t2 )
                 return True
         else:
             self.sendtoMainapp("检查时间年月日失败;0" )

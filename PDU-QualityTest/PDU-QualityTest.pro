@@ -23,6 +23,7 @@ include(setups/setups.pri)
 include(sernum/sernum.pri)
 include(devices/devices.pri)
 include(web_mpdu/web_mpdu.pri)
+include(web_zpdu/web_zpdu.pri)
 include(statedata/statedata.pri)
 
 SOURCES += \

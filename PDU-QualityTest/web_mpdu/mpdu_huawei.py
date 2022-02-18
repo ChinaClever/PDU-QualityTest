@@ -17,6 +17,8 @@ class MpduHuawei(MpduWeb):
         self.sendtoMainapp(message)
         if(intRet == 0):
             return
+        self.checkCalibrationLog()
+        self.checkTime()
         
         opLists = self.opThreshold()
         opLists.sort()
@@ -29,7 +31,8 @@ class MpduHuawei(MpduWeb):
             self.checkTitleBar3(opLists)
         if( int(cfg['series']) == 3 or int(cfg['series']) == 4 ):
             self.openOrOffTitleBar5( False )
-            self.confirmTips( False )
+            #if( int(self.cfgs['popup']) == 1):
+            #    self.confirmTips( False )
             self.checkTitleBar5( False )
             self.openOrOffTitleBar5( True )
             #self.confirmTips( True )
@@ -37,7 +40,7 @@ class MpduHuawei(MpduWeb):
         self.clearEnergy()
         
         self.checkTime()
-        self.clearLogs()
+        #self.clearLogs()
         self.resetFactory()
     
 
@@ -52,7 +55,16 @@ class MpduHuawei(MpduWeb):
         for num in range(0, 2):
             self.execJs(jsSheet.format(num))
             self.driver.find_element_by_id('biao{0}'.format(num+1)).click()
-            time.sleep(2)
+            n1 = datetime.datetime.now()
+            t1 = n1.strftime('%Y-%m-%d %H:%M:%S %p')+';1'
+            self.sendtoMainapp(t1)
+            
+            if(num==0):time.sleep(20)
+            else:time.sleep(6)
+            n2 = datetime.datetime.now()
+            t2 = n2.strftime('%Y-%m-%d %H:%M:%S %p')+';1'
+            self.sendtoMainapp(t2)
+            
             tt = self.driver.find_element_by_id('evenlognum').text
             if( tt != 'Total : 0'):
                 self.sendtoMainapp(ListMessage[num])
@@ -402,39 +414,39 @@ class MpduHuawei(MpduWeb):
     def confirmTips(self , onFlag ):
         cfg = self.cfgs
         op = 24
-        try:
-            if( onFlag == True ):
-                jsSheet = 'if(confirm("输出位指示灯是否顺序打开")){alert("确认顺序打开");}else{alert("不是顺序打开");}'
-                self.execJs(jsSheet)
-                while( True ):
-                    alert = self.driver.switch_to_alert().text
-                    if( alert == '输出位指示灯是否顺序打开' ):
-                        time.sleep(1)
-                    elif( alert == '确认顺序打开' ):
-                        self.sendtoMainapp('输出位指示灯确认顺序打开;1')
-                        break
-                    elif( alert == '不是顺序打开' ):
-                        self.sendtoMainapp('输出位指示灯不是顺序打开;0')
-                        break
-            else:
-                jsSheet = 'if(confirm("输出位指示灯是否顺序关闭")){alert("确认顺序关闭");}else{alert("不是顺序关闭");}'
-                self.execJs(jsSheet)
+        #try:
+            #if( onFlag == True ):
+            #    jsSheet = 'if(confirm("输出位指示灯是否顺序打开")){alert("确认顺序打开");}else{alert("不是顺序打开");}'
+            #    self.execJs(jsSheet)
+            #    while( True ):
+            #        alert = self.driver.switch_to_alert().text
+            #        if( alert == '输出位指示灯是否顺序打开' ):
+            #            time.sleep(1)
+            #        elif( alert == '确认顺序打开' ):
+            #            self.sendtoMainapp('输出位指示灯确认顺序打开;1')
+            #            break
+            #        elif( alert == '不是顺序打开' ):
+            #            self.sendtoMainapp('输出位指示灯不是顺序打开;0')
+            #            break
+            #else:
+            #    jsSheet = 'if(confirm("输出位指示灯是否顺序关闭")){alert("确认顺序关闭");}else{alert("不是顺序关闭");}'
+            #    self.execJs(jsSheet)
                 
-                while( True ):
-                    alert = self.driver.switch_to_alert().text
-                    if( alert == '输出位指示灯是否顺序关闭' ):
-                        time.sleep(1)
-                    elif( alert == '确认顺序关闭' ):
-                        self.sendtoMainapp('输出位指示灯确认顺序关闭;1')
-                        break
-                    elif( alert == '不是顺序关闭' ):
-                        self.sendtoMainapp('输出位指示灯不是顺序关闭;0')
-                        break
-            self.driver.switch_to.alert.accept()
-        except  :
-            print('exception')
-        finally:
-            time.sleep(24)
+            #    while( True ):
+            #        alert = self.driver.switch_to_alert().text
+            #        if( alert == '输出位指示灯是否顺序关闭' ):
+            #            time.sleep(1)
+            #        elif( alert == '确认顺序关闭' ):
+            #            self.sendtoMainapp('输出位指示灯确认顺序关闭;1')
+            #            break
+            #        elif( alert == '不是顺序关闭' ):
+            #            self.sendtoMainapp('输出位指示灯不是顺序关闭;0')
+            #            break
+            #self.driver.switch_to.alert.accept()
+        #except  :
+        #    print('exception')
+        #finally:
+        #    time.sleep(24)
     
     def openOrOffTitleBar5(self , onFlag):
         cfg = self.cfgs
@@ -448,6 +460,8 @@ class MpduHuawei(MpduWeb):
             time.sleep(24)
         else:
             self.driver.find_element_by_id('setoff1').click()
+            if( int(self.cfgs['popup']) == 0):
+                time.sleep(24)
     
     def checkTitleBar5(self , onFlag):
         cfg = self.cfgs
@@ -619,13 +633,13 @@ class MpduHuawei(MpduWeb):
             t1 = int(h1)*3600 + int(m1)*60 + int(s1)
             h2 , m2 , s2 = devTime[1].split(':')
             t2 = int(h2)*3600 + int(m2)*60 + int(s2)
-            if( abs( t1-t2 ) >= 10*60 ):
-                self.sendtoMainapp("设置时间失败;0" )
+            if( abs( t1-t2 ) >= 1*60 ):
+                self.sendtoMainapp("设置时间时分秒失败;0" )
                 return False
             else:
                 #print(abs(t1-t2))
                 self.sendtoMainapp("设置时间成功;1" )
                 return True
         else:
-            self.sendtoMainapp("设置时间失败;0" )
+            self.sendtoMainapp("设置时间年月日失败;0" )
             return False
