@@ -27,7 +27,7 @@ void Home_ZpduDebugWid::initData()
 {
     sDevType *obj = &(mDev->dt);
     ui->levelBox->setCurrentIndex(obj->level);
-    ui->devZpduTypeBox->setCurrentIndex(obj->devZpduType);
+    ui->devZpduTypeBox->setCurrentIndex(obj->devZpduType-1);
     ui->standarBox->setCurrentIndex(obj->standar);
     ui->languageBox->setCurrentIndex(obj->language);
     ui->C1OpEdit->setText(QString::number(obj->loop_op[0]));
@@ -54,7 +54,7 @@ void Home_ZpduDebugWid::updateData()
 {
     sDevType *obj = &(mDev->dt);
     obj->level = ui->levelBox->currentIndex();
-    obj->devZpduType = ui->devZpduTypeBox->currentIndex();
+    obj->devZpduType = ui->devZpduTypeBox->currentIndex()+1;
     obj->standar = ui->standarBox->currentIndex();
     obj->language = ui->languageBox->currentIndex();
     obj->loop_op[0] = ui->C1OpEdit->text().toInt();

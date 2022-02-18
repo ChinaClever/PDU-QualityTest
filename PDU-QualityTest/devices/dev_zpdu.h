@@ -23,7 +23,7 @@ protected:
     void writeDebugHtml();
     void writeData();
     void initUnitV(const QString& prefix, sUnitCfg &unit);
-    void initUnitC(const QString& prefix, sUnitCfg &unit);
+    void initUnitC(const QString& prefix, sUnitCfg &unit ,int value = 32);
     void initUnitT(const QString& prefix, sUnitCfg &unit);
     void initUnitH(const QString& prefix, sUnitCfg &unit);
 };
