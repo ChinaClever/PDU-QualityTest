@@ -29,7 +29,7 @@ class ZpduWeb:
 
     def initCfg(self):
         
-        self.cfgs = {'ip_prefix':'https://','versions':'','user': 'admin', 'password': 'admin123','ip_addr': '192.168.1.163', 'debug_web':  'correct.html','lines':1,'loops':1,'outputs':24,'standar':0,'series':4,'language':1,'breaker':1,'modbus':1,'vol_min':80,'vol_max':276,'cur_min':0,'cur_crmin':0,'cur_crmax':32,'cur_max':32,'tem_min':0,'tem_max':40,'hum_min':0,'hum_max':99,'output_min':0,'output_crmin':0,'output_crmax':16,'output_max':16,'op_1_min':0,'op_1_max':10,'op_1_en':0,'op_1_id':0,'op_1_crmin':0,'op_1_crmax':10,'op_2_min':0,'op_2_max':10,'op_2_en':0,'op_2_id':0,'op_2_crmin':0,'op_2_crmax':10,'op_3_min':0,'op_3_max':10,'op_3_en':0,'op_3_id':0,'op_3_crmin':0,'op_3_crmax':10,'op_4_min':0,'op_4_max':10,'op_4_en':0,'op_4_id':0,'op_4_crmin':0,'op_4_crmax':10,'op_5_min':0,'op_5_max':10,'op_5_en':0,'op_5_id':0,'op_5_crmin':0,'op_5_crmax':10,'op_6_min':0,'op_6_max':10,'op_6_en':0,'op_6_id':0,'op_6_crmin':0,'op_6_crmax':10,'mpdu_ver':0,'boards':3,'level':0,'envbox':0,'loop_1':8,'loop_2':8,'loop_3':8,'loop_4':8,'loop_5':8,'loop_6':8, 'security':0,'popup':1,'ratedVol':230}
+        self.cfgs = {'ip_prefix':'https://','versions':'','user': 'admin', 'password': 'admin123','ip_addr': '192.168.1.163', 'debug_web':  'correct.html','lines':1,'loops':1,'outputs':24,'standar':0,'series':4,'language':0,'breaker':1,'modbus':1,'vol_min':80,'vol_max':276,'cur_min':0,'cur_crmin':0,'cur_crmax':32,'cur_max':32,'tem_min':0,'tem_max':40,'hum_min':0,'hum_max':99,'output_min':0,'output_crmin':0,'output_crmax':16,'output_max':16,'op_1_min':0,'op_1_max':10,'op_1_en':0,'op_1_id':0,'op_1_crmin':0,'op_1_crmax':10,'op_2_min':0,'op_2_max':10,'op_2_en':0,'op_2_id':0,'op_2_crmin':0,'op_2_crmax':10,'op_3_min':0,'op_3_max':10,'op_3_en':0,'op_3_id':0,'op_3_crmin':0,'op_3_crmax':10,'op_4_min':0,'op_4_max':10,'op_4_en':0,'op_4_id':0,'op_4_crmin':0,'op_4_crmax':10,'op_5_min':0,'op_5_max':10,'op_5_en':0,'op_5_id':0,'op_5_crmin':0,'op_5_crmax':10,'op_6_min':0,'op_6_max':10,'op_6_en':0,'op_6_id':0,'op_6_crmin':0,'op_6_crmax':10,'mpdu_ver':0,'boards':3,'level':0,'envbox':0,'loop_1':8,'loop_2':8,'loop_3':8,'loop_4':8,'loop_5':8,'loop_6':8, 'security':0,'popup':1,'ratedVol':230}
         items = ZpduWeb.getCfg().items("zCfg")  # 获取section名为Mysql-Database所对应的全部键值对
         #self.cfgs['mac'] = MpduWeb.getCfg().get("Mac", "mac")
         for it in items:
@@ -45,7 +45,7 @@ class ZpduWeb:
         self.login(self.cfgs['user'] , 'admin')
         win = self.driver.switch_to_alert()
         print(win.text)
-        if( '错误' in win.text):
+        if( '错误' in win.text or 'error' in win.text):
             win.accept()
             return 1,'账号和密码错误;1'
         time.sleep(3)
@@ -69,7 +69,7 @@ class ZpduWeb:
         try:
             win = self.driver.switch_to_alert()
             print(win.text)
-            if( '错误' in win.text):
+            if( '错误' in win.text or 'error' in win.text ):
                 time.sleep(1)
                 win.accept()
                 return 0,'再次输入账号和密码错误;0'

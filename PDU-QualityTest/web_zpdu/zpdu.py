@@ -24,8 +24,11 @@ class Zpdu(ZpduWeb):
         self.sendtoMainapp(message)
         if(intRet == 0):
             return
+        
         self.checkdebughtml()
         time.sleep(0.5)
+        
+        self.getParameter(int(cfg['devzpdutype']))
         
         intRet , message = self.changetoset()
         self.sendtoMainapp(message)
@@ -36,15 +39,18 @@ class Zpdu(ZpduWeb):
         
         self.driver.back()
         self.driver.back()
-        self.setDelay()##
+        
+        if(int(cfg['series']) == 3 or int(cfg['series']) == 4):
+            self.setDelay()##
         self.checkOpValue()##
-        self.checkSensorValue()#
+        self.checkSensorValue()
         self.clearEnergy()##
         self.checkEnergy()##
-        self.openOrCloseOp( False )##
-        self.checkOp( False )##
-        self.openOrCloseOp( True )##
-        self.checkOp( True )##
+        if(int(cfg['series']) == 3 or int(cfg['series']) == 4):
+            self.openOrCloseOp( False )##
+            self.checkOp( False )##
+            self.openOrCloseOp( True )##
+            self.checkOp( True )##
         self.checkTime()
         self.resetfactory()
         
@@ -60,7 +66,48 @@ class Zpdu(ZpduWeb):
         #self.driver.find_element_by_id('h0').click()
         #self.execJs('setdata()')
         #time.sleep(5)
-             
+
+    def checkLanguage(self):
+        cfg = self.cfgs
+    try:
+        flag = True
+        it = self.driver.find_element_by_id('lang_4').text
+        if( 'Name' in it ):
+            flag = False
+        if(int(cfg['language']) == 0 and flag == False):
+            self.sendtoMainapp('检查语言失败(填写为中文，网页是英文);0')
+        elif(int(cfg['language']) == 1 and flag == True):
+            self.sendtoMainapp('检查语言失败(填写为y英文，网页是中文);0')
+        else:
+            self.sendtoMainapp('检查语言成功;1')
+    except:
+        print('检查语言错误')
+    
+    def getParameter(self , v ):
+        #cfg['lines']cfg['loops']cfg['series']cfg['devzpdutype']
+        cfg = self.cfgs
+        if( (v >= 5 and v <= 8) or
+            (v >= 13 and v <= 16) ):
+            cfg['lines'] = 3
+        else:
+            cfg['lines'] = 1
+            
+        if( v >= 1 and v <= 4):
+            cfg['loops'] = 2
+        elif(v >= 5 and v <= 8):
+            cfg['loops'] = 3
+        elif(v >= 9 and v <= 12):
+            cfg['loops'] = 4
+        elif(v >= 13 and v <= 16):
+            cfg['loops'] = 6
+        else:
+            cfg['loops'] = 1
+            
+        if( v%4 ):
+            cfg['series'] = v%4
+        else:
+            cfg['series'] = 4
+            
     def close(self):
         time.sleep(0.1)
         #print(datetime.datetime.now())
@@ -160,9 +207,9 @@ class Zpdu(ZpduWeb):
         cfg = self.cfgs
         time.sleep(2)
         self.checkMacAddress()
-        status , message = self.check( 'bb' , self.cfgs['level'] , '屏幕显示方向')
+        status , message = self.check( 'bb' , cfg['level'] , '屏幕显示方向')
         self.sendtoMainapp(message)
-        status , message = self.checkStr( 'cc' , self.cfgs['devzpdutype'] , '设备类型')
+        status , message = self.checkStr( 'cc' , cfg['devzpdutype'] , '设备类型')
         self.sendtoMainapp(message)
         strId = ''
         strCfgs = ''
@@ -171,21 +218,21 @@ class Zpdu(ZpduWeb):
             strId = 'C{0}'.format(i)
             strCfgs = 'loop_op{0}'.format(i)
             showMessage = 'C{0}回路输出位'.format(i)
-            status , message = self.check( strId , self.cfgs[strCfgs] , showMessage)
+            status , message = self.check( strId , cfg[strCfgs] , showMessage)
             self.sendtoMainapp(message)
         for i in range(1,7):
             strId = 'd{0}'.format(i)
             strCfgs = 'loop_smallloop{0}'.format(i)
             showMessage = 'C{0}回路小回路'.format(i)
-            status , message = self.check( strId , self.cfgs[strCfgs] , showMessage)
+            status , message = self.check( strId , cfg[strCfgs] , showMessage)
             self.sendtoMainapp(message)
         for i in range(1,4):
             strId = 'L{0}'.format(i)
             strCfgs = 'line_op{0}'.format(i)
             showMessage = 'L{0}相输出位'.format(i)
-            status , message = self.check( strId , self.cfgs[strCfgs] , showMessage)
+            status , message = self.check( strId , cfg[strCfgs] , showMessage)
             self.sendtoMainapp(message)
-        status , message = self.check( 'ee' , self.cfgs['standar'] , '版本类型')
+        status , message = self.check( 'ee' , cfg['standar'] , '版本类型')
         self.sendtoMainapp(message)
         
     def checksethtml(self):
@@ -193,21 +240,21 @@ class Zpdu(ZpduWeb):
         strId = ''
         strCfgs = ''
         showMessage = ''
-        status , message = self.check( 'a1' , self.cfgs['type'] , '型号')
+        status , message = self.check( 'a1' , cfg['type'] , '型号')
         self.sendtoMainapp(message)
-        status , message = self.check( 'a2' , self.cfgs['hw_version'] , '硬件版本')
+        status , message = self.check( 'a2' , cfg['hw_version'] , '硬件版本')
         self.sendtoMainapp(message)
-        status , message = self.check( 'a3' , self.cfgs['protocol_version'] , '通讯协议版本')
+        status , message = self.check( 'a3' , cfg['protocol_version'] , '通讯协议版本')
         self.sendtoMainapp(message)
-        status , message = self.check( 'a4' , self.cfgs['rated_voltage'] , '额定电压')
+        status , message = self.check( 'a4' , cfg['rated_voltage'] , '额定电压')
         self.sendtoMainapp(message)
-        status , message = self.check( 'a5' , self.cfgs['rated_current'] , '额定电流')
+        status , message = self.check( 'a5' , cfg['rated_current'] , '额定电流')
         self.sendtoMainapp(message)
-        status , message = self.check( 'a6' , self.cfgs['rated_frequency'] , '额定频率')
+        status , message = self.check( 'a6' , cfg['rated_frequency'] , '额定频率')
         self.sendtoMainapp(message)
-        status , message = self.check( 'a7' , self.cfgs['lines'] , '相位数')
+        status , message = self.check( 'a7' , cfg['lines'] , '相位数')
         self.sendtoMainapp(message)
-        status , message = self.check( 'a8' , self.cfgs['breaker'] , '断路器类型')
+        status , message = self.check( 'a8' , cfg['breaker'] , '断路器类型')
         self.sendtoMainapp(message)
         
         list=[]
@@ -218,7 +265,7 @@ class Zpdu(ZpduWeb):
             strCfgs = 'zpduopcur_{0}_max'.format(i)
             showMessage = '输出位{0}'.format(i)
             a = '0'
-            if int(self.cfgs[strCfgs]) == 16:
+            if int(cfg[strCfgs]) == 16:
                 a = '1'
             list.append(strId)
             cfgStr.append(a)
@@ -264,26 +311,29 @@ class Zpdu(ZpduWeb):
             cfgStr = []
             outputStr = []
             for i in range(0 , int(cfg['outputs'])):
-                str = 'd{0}'.format(i)
-                list.append(str)
-                cfgStr.append('1')
-                outputStr.append('输出位{0}开关延时'.format(i+1))
-                str = 'e{0}'.format(i)
-                list.append(str)
-                cfgStr.append(cfg['zpduopcur_{0}_min'.format(i+1)])
-                outputStr.append('输出位{0}最小值'.format(i+1))
-                str = 'f{0}'.format(i)
-                list.append(str)
-                cfgStr.append(cfg['zpduopcur_{0}_crmin'.format(i+1)])
-                outputStr.append('输出位{0}下临值'.format(i+1))
-                str = 'g{0}'.format(i)
-                list.append(str)
-                cfgStr.append(cfg['zpduopcur_{0}_crmax'.format(i+1)])
-                outputStr.append('输出位{0}上临值'.format(i+1))
-                str = 'h{0}'.format(i)
-                list.append(str)
-                cfgStr.append(cfg['zpduopcur_{0}_max'.format(i+1)])
-                outputStr.append('输出位{0}最大值'.format(i+1))
+                if(int(cfg['series']) == 3 or int(cfg['series']) == 4):
+                    str = 'd{0}'.format(i)
+                    list.append(str)
+                    cfgStr.append('1')
+                    outputStr.append('输出位{0}开关延时'.format(i+1))
+                    
+                if(int(cfg['series']) == 2 or int(cfg['series']) == 4):
+                    str = 'e{0}'.format(i)
+                    list.append(str)
+                    cfgStr.append(cfg['zpduopcur_{0}_min'.format(i+1)])
+                    outputStr.append('输出位{0}最小值'.format(i+1))
+                    str = 'f{0}'.format(i)
+                    list.append(str)
+                    cfgStr.append(cfg['zpduopcur_{0}_crmin'.format(i+1)])
+                    outputStr.append('输出位{0}下临值'.format(i+1))
+                    str = 'g{0}'.format(i)
+                    list.append(str)
+                    cfgStr.append(cfg['zpduopcur_{0}_crmax'.format(i+1)])
+                    outputStr.append('输出位{0}上临值'.format(i+1))
+                    str = 'h{0}'.format(i)
+                    list.append(str)
+                    cfgStr.append(cfg['zpduopcur_{0}_max'.format(i+1)])
+                    outputStr.append('输出位{0}最大值'.format(i+1))
             self.checkAndSendTitleBar3(list , cfgStr , outputStr , 2)    
         except:
             print('检查输出位阈值错误')
@@ -340,7 +390,7 @@ class Zpdu(ZpduWeb):
             list=[]
             cfgStr = []
             outputStr = []
-            for i in range(4 , 10):
+            for i in range(4 , 4+int(cfg['loops'])):
                 list.append('d{0}'.format(i))
                 cfgStr.append(cfg['loopcur_min'])
                 outputStr.append('C{0}电流最小值'.format(i-3))
@@ -363,7 +413,7 @@ class Zpdu(ZpduWeb):
             list=[]
             cfgStr = []
             outputStr = []
-            for i in range(10 , 13):
+            for i in range(10 , 10+int(cfg['lines'])):
                 list.append('d{0}'.format(i))
                 cfgStr.append(cfg['cur_min'])
                 outputStr.append('L{0}电流最小值'.format(i-9))
@@ -386,7 +436,7 @@ class Zpdu(ZpduWeb):
             list=[]
             cfgStr = []
             outputStr = []
-            for i in range(13 , 16):
+            for i in range(13 , 13+int(cfg['lines'])):
                 list.append('d{0}'.format(i))
                 cfgStr.append(cfg['vol_min'])
                 outputStr.append('L{0}电压最小值'.format(i-9))
@@ -412,6 +462,7 @@ class Zpdu(ZpduWeb):
             self.driver.find_elements_by_class_name('menuItem')[6].click()
             time.sleep(1)
             self.driver.switch_to.frame('iframe2_d')
+            self.checkLanguage()
             self.checkTem()
             self.checkHum()
             self.checkLoopCur()
@@ -429,8 +480,12 @@ class Zpdu(ZpduWeb):
             self.driver.find_elements_by_class_name('menuItem')[7].click()
             time.sleep(1)
             self.driver.switch_to.frame('iframe2_e')
-            for i in range(0 , int(cfg['outputs'])):
-                self.driver.find_element_by_id('d{0}'.format(i)).click()
+            if(int(cfg['series']) == 2 or int(cfg['series']) == 4):
+                for i in range(0 , int(cfg['outputs'])):
+                    self.driver.find_element_by_id('d{0}'.format(i)).click()
+            elif(int(cfg['series']) == 1 or int(cfg['series']) == 3):
+                for i in range(50 , 50+int(cfg['loops'])):
+                    self.driver.find_element_by_id('d{0}'.format(i)).click()
             self.driver.find_element_by_id('d56').click()
             self.sendtoMainapp('清理电能操作;1') 
         except:
@@ -448,10 +503,16 @@ class Zpdu(ZpduWeb):
             list=[]
             cfgStr = []
             outputStr = []
-            for i in range(0 , int(cfg['outputs'])):
-                list.append('c{0}'.format(i))
-                cfgStr.append('0.0')
-                outputStr.append('输出位{0}电能清零'.format(i+1))
+            if(int(cfg['series']) == 2 or int(cfg['series']) == 4):
+                for i in range(0 , int(cfg['outputs'])):
+                    list.append('c{0}'.format(i))
+                    cfgStr.append('0.0')
+                    outputStr.append('输出位{0}电能清零'.format(i+1))
+            elif(int(cfg['series']) == 1 or int(cfg['series']) == 3):
+                for i in range(50 , 50+int(cfg['loops'])):
+                    list.append('c{0}'.format(i))
+                    cfgStr.append('0.00')
+                    outputStr.append('C{0}电能清零'.format(i-49))
             self.checkAndSendTitleBar3(list , cfgStr , outputStr , 8)
         except:
             print('检查电能失败')
@@ -579,11 +640,13 @@ class Zpdu(ZpduWeb):
             if( case == 1):
                 self.sendtoMainapp("检查set后台各输出位阈值成功;1" )
             elif( case == 2):
-                self.sendtoMainapp("输出位开关延时成功;1" )
-                self.sendtoMainapp("输出位最小值成功;1" )
-                self.sendtoMainapp("输出位下临界值成功;1" )
-                self.sendtoMainapp("输出位上临界值成功;1" )
-                self.sendtoMainapp("输出位最大值成功;1" )
+                if(int(cfg['series']) == 3 or int(cfg['series']) == 4):
+                    self.sendtoMainapp("输出位开关延时成功;1" )
+                if(int(cfg['series']) == 2 or int(cfg['series']) == 4):
+                    self.sendtoMainapp("输出位最小值成功;1" )
+                    self.sendtoMainapp("输出位下临界值成功;1" )
+                    self.sendtoMainapp("输出位上临界值成功;1" )
+                    self.sendtoMainapp("输出位最大值成功;1" )
             elif( case == 3):
                 self.sendtoMainapp("检查温度最小值成功;1" )
                 self.sendtoMainapp("检查温度下临界值成功;1" )
