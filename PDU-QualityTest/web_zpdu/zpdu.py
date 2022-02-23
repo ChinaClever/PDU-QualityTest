@@ -69,19 +69,19 @@ class Zpdu(ZpduWeb):
 
     def checkLanguage(self):
         cfg = self.cfgs
-    try:
-        flag = True
-        it = self.driver.find_element_by_id('lang_4').text
-        if( 'Name' in it ):
-            flag = False
-        if(int(cfg['language']) == 0 and flag == False):
-            self.sendtoMainapp('检查语言失败(填写为中文，网页是英文);0')
-        elif(int(cfg['language']) == 1 and flag == True):
-            self.sendtoMainapp('检查语言失败(填写为y英文，网页是中文);0')
-        else:
-            self.sendtoMainapp('检查语言成功;1')
-    except:
-        print('检查语言错误')
+        try:
+            flag = True
+            it = self.driver.find_element_by_id('lang_4').text
+            if( 'Name' in it ):
+                flag = False
+            if(int(cfg['language']) == 0 and flag == False):
+                self.sendtoMainapp('检查语言失败(填写为中文，网页是英文);0')
+            elif(int(cfg['language']) == 1 and flag == True):
+                self.sendtoMainapp('检查语言失败(填写为y英文，网页是中文);0')
+            else:
+                self.sendtoMainapp('检查语言成功;1')
+        except:
+            print('检查语言错误')
     
     def getParameter(self , v ):
         #cfg['lines']cfg['loops']cfg['series']cfg['devzpdutype']
