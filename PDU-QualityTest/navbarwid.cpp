@@ -18,7 +18,7 @@ NavBarWid::NavBarWid(QWidget *parent) :
     gridLayout->addWidget(this);
     mUserLand = new UsrLandDlg(this);
 
-    QTimer::singleShot(5,this,SLOT(on_loginBtn_clicked()));
+    //QTimer::singleShot(5,this,SLOT(on_loginBtn_clicked()));
     connect(mUserLand,SIGNAL(sendUserNameSig(QString)),this,SLOT(recvUserNameSlot(QString)));
 }
 

@@ -114,5 +114,6 @@ void Home_ZpduSetWid::updateData()
     for(int i = 0 ; i < ZpduOpSize ; i++)
     {
         mDev->cfg.zpduopCur[i].max = mListWid[i]->currentIndex() == 0 ? 10 : 16;
+        mDev->cfg.zpduopCur[i].crMax = mListWid[i]->currentIndex() == 0 ? 10 : 16;
     }
 }
