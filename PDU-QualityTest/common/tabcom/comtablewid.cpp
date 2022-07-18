@@ -359,7 +359,7 @@ void ComTableWid::setColumnWidth(int column, int width)
     ui->tableWidget->setColumnWidth(column, width);
 }
 
-int ComTableWid::getList(QList<QStringList> list)
+int ComTableWid::getList(QList<QStringList> &list)
 {
     QStringList header;
     header << tr("编号") << mHeader;

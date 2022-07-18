@@ -9,6 +9,7 @@ Td_StatusTabWid::Td_StatusTabWid(QWidget *parent) : ComTableWid(parent)
 {
     initWid();
     mPro = sDataPacket::bulid()->getPro();
+//    t = 0;
 }
 
 
@@ -49,6 +50,13 @@ void Td_StatusTabWid::appendItem()
 
 void Td_StatusTabWid::timeoutDone()
 {
+//    if( t < 50 )
+//    {
+//        mPro->time = QTime::currentTime().toString("hh:mm:ss");
+//        mPro->itPass<<"√";
+//        mPro->item << "ttttttttt";
+//        t++;
+//    }
     while(mPro->item.size())
         appendItem();
 }

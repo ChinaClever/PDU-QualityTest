@@ -106,6 +106,8 @@ void Home_MpduParamWid::updateType()
         emit sendVerSig(dt->versions.toInt());
     else
         emit sendVerSig(30);
+
+    mItem->sn = ui->snEdit->text();
 }
 
 void Home_MpduParamWid::setItHidden(bool hidden)
@@ -123,6 +125,9 @@ void Home_MpduParamWid::setItHidden(bool hidden)
     ui->label_6->setHidden(hidden);
     ui->label_8->setHidden(hidden);
     ui->label_10->setHidden(hidden);
+
+    ui->label->setHidden(!hidden);
+    ui->snEdit->setHidden(!hidden);
 }
 
 void Home_MpduParamWid::setItHiddenOpCtrl(bool hidden)

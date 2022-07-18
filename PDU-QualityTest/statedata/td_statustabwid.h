@@ -24,6 +24,7 @@ protected slots:
 
 private:
     sProgress *mPro;
+//    int t;
 };
 
 #endif // TD_STATUSTABWID_H

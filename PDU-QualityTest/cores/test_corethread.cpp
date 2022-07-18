@@ -77,7 +77,7 @@ void Test_CoreThread::workDown()
     bool ret = true;
     mItem->sn.clear();
     mLogs->updatePro(tr("质检已启动"));
-    if(mItem->enSn) ret = mSn->snEnter();
+    if(mItem->sn.isEmpty() &&mItem->enSn) ret = mSn->snEnter();
     if(ret) ret = startProcess();
 
     workResult(ret);

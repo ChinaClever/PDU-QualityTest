@@ -16,13 +16,19 @@ class Td_MainWid : public QWidget
 public:
     explicit Td_MainWid(QWidget *parent = nullptr);
     ~Td_MainWid();
+    void exportLog(QString str);
 
 signals:
     void startSig();
 
+private slots:
+    void on_exportBtn_clicked();
+
+
 private:
     Ui::Td_MainWid *ui;
     Td_StatusTabWid *mStatusTabWid;
+    sCfgItem * mItem;
 };
 
 #endif // TD_MAINWID_H
