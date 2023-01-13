@@ -136,7 +136,7 @@ class MpduWeb:
         try:
             message =''
             self.driver.find_element_by_id(ssid)
-        except NoSuchElementException:
+        except:
             message =  '网页上找不到{0}ID;'.format(parameter)+str(2)
             sock.sendto(message.encode('utf-8-sig') , (dest_ip , dest_port))
             return 2,message
@@ -307,7 +307,7 @@ class MpduWeb:
         if( '2C:26:5F:' in v ):
             message ='检查{0}成功{1};'.format(parameter,v)+str(1)
         else:
-            message = '检查{0}失败，实际值{1};'.format(parameter,v)+str(1)
+            message = '检查{0}失败，实际值{1};'.format(parameter,v)+str(0)
         #sock.sendto(message.encode('utf-8-sig') , (dest_ip , dest_port))
         return ret,message
 

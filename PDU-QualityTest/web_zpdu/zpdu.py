@@ -10,7 +10,7 @@ class Zpdu(ZpduWeb):
         self.port = dest_port
         intRet , message = 0 , ''
         if(cfg['ip_prefix'] == 'https://'):
-            intRet , message = self.login1()
+            intRet , message = self.login3()
             self.sendtoMainapp(message)
             if(intRet == 0):
                 return

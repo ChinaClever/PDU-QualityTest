@@ -157,12 +157,17 @@ class Mpdu2(MpduWeb):
         self.sendtoMainapp(message)
         status , message = self.check( 'line10' , cfg['board_3'] , '第3块执行板输出位数')
         self.sendtoMainapp(message)
-        status , message = self.check( 'line11' , cfg['board_4'] , '第4块执行板输出位数')
-        self.sendtoMainapp(message)
-        status , message = self.check( 'line12' , cfg['board_5'] , '第5块执行板输出位数')
-        self.sendtoMainapp(message)
-        status , message = self.check( 'line13' , cfg['board_6'] , '第6块执行板输出位数')
-        self.sendtoMainapp(message)
+        try:
+            status , message = self.check( 'line11' , cfg['board_4'] , '第4块执行板输出位数')
+            self.sendtoMainapp(message)
+            status , message = self.check( 'line12' , cfg['board_5'] , '第5块执行板输出位数')
+            self.sendtoMainapp(message)
+            status , message = self.check( 'line13' , cfg['board_6'] , '第6块执行板输出位数')
+            self.sendtoMainapp(message)
+            status , message = self.check( 'RatedVol' , str(cfg['ratedVol']) , '额定电压')
+            self.sendtoMainapp(message)
+        except:
+            pass
         
         status , message = self.check( 'line4' , cfg['loops'] , '回路数')
         self.sendtoMainapp(message)
@@ -203,9 +208,6 @@ class Mpdu2(MpduWeb):
         self.sendtoMainapp(message)
         
         status , message = self.check( 'type' , cfg['series'] , '系列')
-        self.sendtoMainapp(message)
-        
-        status , message = self.check( 'RatedVol' , str(cfg['ratedVol']) , '额定电压')
         self.sendtoMainapp(message)
         
         status , message = self.check( 'language' , cfg['language'] , '中英文')
@@ -635,7 +637,7 @@ class Mpdu2(MpduWeb):
             time.sleep(1)
         time.sleep(0.35)
         self.driver.find_element_by_id("titlebar5").click()
-        time.sleep(0.35)
+        time.sleep(1.55)
         if( onFlag == True ):
             self.driver.find_element_by_id('seton43').click()
             time.sleep(int(self.cfgs['outputs'])+5)
@@ -652,7 +654,7 @@ class Mpdu2(MpduWeb):
             time.sleep(1)
         time.sleep(0.35)
         self.driver.find_element_by_id("titlebar5").click()
-        time.sleep(0.35)
+        time.sleep(1.55)
         
         op = cfg['outputs']
         statusList = []
@@ -750,7 +752,7 @@ class Mpdu2(MpduWeb):
             time.sleep(1)
         time.sleep(0.5)
         self.driver.find_element_by_id("titlebar4").click()
-        time.sleep(0.5)
+        time.sleep(1.5)
         
         #line = int(cfg['lines'])
         line = 3
@@ -792,7 +794,7 @@ class Mpdu2(MpduWeb):
             crmaxList.append(crmaxStr.format(i))
             indexList.append(i)
             
-        lists =[[]for i in range(6)]
+        lists =[[]for i in range(7)]
         zz = zip(minList , maxList , enList , idList , crminList , crmaxList,indexList)
         index = 0
         for min , max , en , id , crmin , crmax ,index in zz:

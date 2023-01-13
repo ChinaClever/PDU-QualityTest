@@ -43,9 +43,10 @@ class ZpduWeb:
             return 0,'输入IP错误;0'
         
         self.login(self.cfgs['user'] , 'admin')
+        time.sleep(1)
         win = self.driver.switch_to_alert()
         print(win.text)
-        if( '错误' in win.text or 'error' in win.text):
+        if( '错误' in win.text or 'error' in win.text or'不正确' in win.text or 'incorrect' in win.text):
             win.accept()
             return 1,'账号和密码错误;1'
         time.sleep(3)
@@ -65,11 +66,11 @@ class ZpduWeb:
             self.driver.get(ip)
         except WebDriverException:
             return 0,'输入IP错误;0'
-        self.login(self.cfgs['user'] , self.cfgs['password'])
+        self.login('admin' , 'Admin123')
         try:
             win = self.driver.switch_to_alert()
             print(win.text)
-            if( '错误' in win.text or 'error' in win.text ):
+            if( '错误' in win.text or 'error' in win.text or'不正确' in win.text or 'incorrect' in win.text):
                 time.sleep(1)
                 win.accept()
                 return 0,'再次输入账号和密码错误;0'
@@ -77,10 +78,33 @@ class ZpduWeb:
             time.sleep(2)
             return 1,'输入IP正确;1'
     
+    def login3(self):
+        ip =  self.cfgs['ip_prefix'] +self.cfgs['ip_addr']
+        try:
+            self.driver.get(ip)
+        except WebDriverException:
+            return 0,'输入IP错误;0'
+        ret = self.setItById('name_create', 'admin' , '账号')
+        if( ret == False ):
+            return -1,'没有此控件;1'
+        self.setItById('psd_create', 'Admin123'  , '密码')
+        self.setItById('psd_check', 'Admin123'  , '再次输入密码')
+            
+        try:
+            self.driver.find_element_by_id('lang_9').click()
+            time.sleep(0.5)
+        except :
+            return -1,'没有此按钮;1'
+        return 1,'输入IP正确;1'
+    
     def login(self , user , password ):    
         self.setItById('name', user , '账号')
         self.setItById('psd', password  , '密码')
-        self.execJs('login()')
+        try:
+            self.driver.find_element_by_id('lang_4').click()
+            time.sleep(0.5)
+        except :
+            return -1,'没有此按钮;1'
         
         
     def setEle(self):
