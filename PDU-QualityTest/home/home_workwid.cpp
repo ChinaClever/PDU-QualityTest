@@ -51,6 +51,10 @@ void Home_WorkWid::initFunSlot()
     timer = new QTimer(this);
     timer->start(500);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeoutDone()));
+    ui->guideCheck->hide();
+    ui->guideCheck->setChecked(false);
+    ui->snCheckBox->hide();
+    ui->snCheckBox->setChecked(false);
 }
 
 void Home_WorkWid::setTextColor()
@@ -299,15 +303,15 @@ void Home_WorkWid::on_startBtn_clicked()
 
 void Home_WorkWid::recvVerSlot(int ver)
 {
-    if( ver <= 32 )
-        ui->snCheckBox->setChecked(false);
-    else
-    {
-        ui->snCheckBox->setChecked(true);
-        if( ver >= 300 && ver <= 320)
-            ui->snCheckBox->setChecked(false);
+//    if( ver <= 32 )
+//        ui->snCheckBox->setChecked(false);
+//    else
+//    {
+//        ui->snCheckBox->setChecked(true);
+//        if( ver >= 300 && ver <= 320)
+//            ui->snCheckBox->setChecked(false);
 
-    }
+//    }
     initTypeComboBox();
 }
 
@@ -363,11 +367,11 @@ void Home_WorkWid::initTypeComboBox()
 {
     bool en = false;
     int index = mItem->modeId;
-    mItem->enSn = ui->snCheckBox->isChecked();
+    //mItem->enSn = ui->snCheckBox->isChecked();
     sDevData* ptr = mPacket->getMpdu();
     if(index > MPDU) {
         en = true;
-        mItem->enSn = false;
+        //mItem->enSn = false;
         ui->outputBtn->setHidden(en);
         ptr = mPacket->getZpdu();
     } else if(index == MPDU) {
@@ -376,7 +380,7 @@ void Home_WorkWid::initTypeComboBox()
         ui->outputBtn->setHidden(true);
     }
     //ui->setBtn->setHidden(en);
-    ui->snCheckBox->setHidden(en);
+    //ui->snCheckBox->setHidden(en);
 
     mSetOpDlg->updateIndex(index);
     ui->typeComboBox->setCurrentIndex(index);
