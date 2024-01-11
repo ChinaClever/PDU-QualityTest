@@ -151,11 +151,15 @@ void Home_WorkWid::updateWid()
     QString str = mItem->sn;
     if(str.isEmpty()) str = "--- ---";
     ui->snLab->setText(str);
+    mPro->productSN = str;
 
     str = mItem->dev_type;
     if(str.isEmpty()) str = "--- ---";
     ui->devLab->setText(str);
+    mPro->productType = str;
 
+    mPro->goods_SN = ui->snEdit->text();
+    mPro->clientName = ui->userEdit->text();
     if(mPro->step < Test_Over) {
         updateTime();
     } else if(mPro->step < Test_End){
@@ -291,7 +295,11 @@ void Home_WorkWid::on_startBtn_clicked()
 {
     bool ret = true;
     if(mPro->step == Test_End) {
-        if(initWid())mCoreThread->start();
+        if(!ui->snEdit->text().isEmpty()){
+            if(initWid())mCoreThread->start();
+        }else{
+            MsgBox::critical(this, tr("请先填写成品序列号！"));
+        }
     } else {
         ret = MsgBox::question(this, tr("确定需要提前结束？"));
         if(ret) {
@@ -400,4 +408,9 @@ void Home_WorkWid::on_guideCheck_clicked(bool checked)
     sDevData* ptr = mPacket->getMpdu();
     ptr->dt.popup = checked?1:0;
     emit savePopupSig(checked);
+}
+
+void Home_WorkWid::on_snEdit_textChanged(const QString &arg1)
+{
+    ui->snEdit->setClearButtonEnabled(1);
 }

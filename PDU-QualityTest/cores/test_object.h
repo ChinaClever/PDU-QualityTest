@@ -2,6 +2,7 @@
 #define TEST_OBJECT_H
 
 #include "sn_serialnum.h"
+#include "json_pack.h"
 
 class Test_Object : public QThread
 {

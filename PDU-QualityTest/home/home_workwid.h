@@ -55,6 +55,8 @@ private slots:
     void recvVerSlot(int ver);
     void on_guideCheck_clicked(bool checked);
 
+    void on_snEdit_textChanged(const QString &arg1);
+
 public slots:
     void errSlot() {QTimer::singleShot(5,this,SLOT(saveErrSlot()));}
 
@@ -70,5 +72,6 @@ private:
     Test_CoreThread *mCoreThread;
     bool isCheck;
 };
+
 
 #endif // HOME_WORKWID_H

@@ -164,6 +164,23 @@ struct sProgress
 
     uchar result;    // 最终结果
     QTime startTime;
+
+    QString softwareType;
+    QString companyName;
+    QString protocolVersion;
+
+    QString productType;
+    QString productSN;
+    QString macAddress;
+    QString softwareVersion;
+    QString clientName;
+    QString testTime;
+    QString testStartTime;
+    QString testEndTime;
+    QStringList no, itemName;
+    QList<bool> uploadPass;
+    uchar uploadPassResult;
+    QString goods_SN;
 };
 
 

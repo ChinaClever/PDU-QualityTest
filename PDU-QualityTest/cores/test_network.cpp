@@ -32,8 +32,15 @@ void Test_NetWork::workDown()
     UdpBaseData *res = mUdp->getData();
     if(res) {
         QStringList list = QString(res->datagram).split(";");
+        qDebug() <<"list.first()" << list.first();
         if(list.size() == 2) {
             QString str = list.first();
+            if(str.contains(("软件版本正确")))
+                emit sendVersionSig(str);
+            if(str.contains(("version")))
+                emit sendVersionSig(str);
+            if(str.contains(("Mac")))
+                emit sendMACSig(str);
             bool pass = list.last().toInt();
             mLogs->updatePro(str, pass, 0);
         } else {

@@ -19,12 +19,15 @@ protected:
 
 protected slots:
     void initFunSlot();
-
+    void getVersionSlot(QString str);
+    void getMacSlot(QString str);
 private:
     Test_Logs *mLogs;
     Sn_SerialNum *mSn;
     Test_NetWork *mRead;
     QProcess *mProcess;
+    QString mVersion;
+    QString mMacStr;
 };
 
 #endif // TEST_CORETHREAD_H
